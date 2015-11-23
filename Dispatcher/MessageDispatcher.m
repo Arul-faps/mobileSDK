@@ -1,7 +1,5 @@
 //
 //  MessageDispatcher.m
-//  missingkids
-//
 //  Created by Gal Blank on 9/21/15.
 //  Copyright © 2015 Gal Blank. All rights reserved.
 //
@@ -171,43 +169,11 @@ MessageDispatcher *sharedInstance = nil;
     
     switch (message.mesType) {
         case MESSAGETYPE_GET_CONFIG:
-            //[[CommManager sharedInstance] postAPI:@"NewUser" andParams:message.params];
+            
             break;
         default:
             break;
     }
-}
-
-
-
--(NSString*)generatelocalpathforImageID:(NSString*)imageID
-{
-    if(imageID == nil){
-        imageID = [NSString stringWithFormat:@"%f.jpg",[[NSDate date] timeIntervalSince1970]];
-    }
-    NSArray *paths = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
-    NSURL *documentURL = [paths objectAtIndex:0];
-    documentURL = [documentURL URLByAppendingPathComponent:@"missingkids_images" isDirectory:YES];
-    BOOL bExists = NO;
-    BOOL isFolder;
-    if (![[NSFileManager defaultManager] fileExistsAtPath:[documentURL path] isDirectory:&isFolder])
-    {
-        NSError *error = nil;
-        bExists = [[NSFileManager defaultManager] createDirectoryAtURL:documentURL withIntermediateDirectories:YES attributes:nil error:&error];
-    }
-    else{
-        bExists = YES;
-    }
-    NSString * url = [NSString stringWithFormat:@"%@/%@",documentURL.path,imageID];
-    return url;
-}
-
-
-
--(NSString *)saveImage:(UIImage*)image{
-    NSString * localpath  = [self generatelocalpathforImageID:nil];
-    BOOL bFileWritten = [UIImageJPEGRepresentation(image, 0.0) writeToFile:localpath atomically:YES];
-    return localpath;
 }
 
 
