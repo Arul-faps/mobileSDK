@@ -5,7 +5,7 @@
 //
 
 #import "MessageDispatcher.h"
-
+#import "CommManager.h"
 @implementation MessageDispatcher
 
 MessageDispatcher *sharedInstance = nil;
@@ -116,6 +116,18 @@ MessageDispatcher *sharedInstance = nil;
 }
 
 
+-(messageType)messageNameTomessageType:(NSString*)messageName
+{
+    if([messageName caseInsensitiveCompare:@"TokenForTransaction"] == NSOrderedSame){
+        return TokenForTransaction;
+    }
+    else if([messageName caseInsensitiveCompare:@"IngenicoMessage"] == NSOrderedSame){
+        return IngenicoMessage;
+    }
+    
+    return -1;
+}
+
 -(NSString*)messageTypeToString:(messageType)Type
 {
     NSString *retMessage = @"";
@@ -123,7 +135,15 @@ MessageDispatcher *sharedInstance = nil;
         case MESSAGETYPE_GET_CONFIG:
             retMessage = @"MESSAGETYPE_GET_CONFIG";
             break;
-        
+        case TokenForTransactionRequest:
+            retMessage = @"TokenForTransactionRequest";
+            break;
+        case TokenForTransaction:
+            retMessage = @"TokenForTransaction";
+            break;
+        case IngenicoMessage:
+            retMessage = @"IngenicoMessage";
+            break;
         default:
             break;
     }
@@ -161,6 +181,7 @@ MessageDispatcher *sharedInstance = nil;
     if(message.params == nil){
         message.params = [[NSMutableDictionary alloc] init];
     }
+    
     NSString * sectoken = [[NSUserDefaults standardUserDefaults] objectForKey:@"securitytoken"];
     
     if(sectoken && sectoken.length > 0){
@@ -170,6 +191,9 @@ MessageDispatcher *sharedInstance = nil;
     switch (message.mesType) {
         case MESSAGETYPE_GET_CONFIG:
             
+            break;
+        case TokenForTransactionRequest:
+            [[CommManager sharedInstance] postAPI:@"Transaction/GenerateTokenForTransaction" andParams:@{@"merchantKey":[Config sharedInstance].gateway_id ,@"processorId":[AppConfiguration sharedConfig].midTidID}.mutableCopy];
             break;
         default:
             break;
@@ -183,13 +207,7 @@ MessageDispatcher *sharedInstance = nil;
 {
     switch (message.mesType) {
         case MESSAGETYPE_GET_CONFIG:
-        {
-            if(((NSString*)([message.params objectForKey:@"apnskey"])).length <= 10){
-                return NO;
-            }
-            
-            
-        }
+        case TokenForTransactionRequest:
         break;
         default:
             break;

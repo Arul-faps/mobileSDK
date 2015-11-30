@@ -15,7 +15,7 @@
 #define     KEY_RESULT_STRING              @"KEY_RESULT_STRING"
 #define     KEY_RESULT_FAILURE_ERROR       @"KEY_RESULT_FAILURE_ERROR"
 
-#define     ROOT_API                       @"https://secure-qa.goemerchant.com/secure/RestGW/Gateway/Transaction"
+#define     ROOT_API                       @"https://secure-qa.goemerchant.com/secure/RestGW/Gateway/"
 
 
 

@@ -59,8 +59,9 @@ static CommManager *sharedSampleSingletonDelegate = nil;
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
     NSString *fullAPI = [NSString stringWithFormat:@"%@%@",ROOT_API,api];
     NSLog(@"GET: %@<>%@",fullAPI,params);
+    
     [manager GET:fullAPI parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        //NSLog(@"JSON: %@", responseObject);
+        NSLog(@"JSON: %@", responseObject);
         Message *msg = [[Message alloc] init];
         msg.mesRoute = MESSAGEROUTE_INTERNAL;
         msg.mesType = [[responseObject objectForKey:@"messageid"] intValue];
@@ -76,12 +77,14 @@ static CommManager *sharedSampleSingletonDelegate = nil;
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
     NSString *fullAPI = [NSString stringWithFormat:@"%@%@",ROOT_API,api];
-    NSLog(@"POST: %@:%@",fullAPI,params);
+
+    
     [manager POST:fullAPI parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        //NSLog(@"JSON: %@", responseObject);
+        NSLog(@"JSON: %@", responseObject);
         Message *msg = [[Message alloc] init];
         msg.mesRoute = MESSAGEROUTE_INTERNAL;
-        msg.mesType = [[responseObject objectForKey:@"messageid"] intValue];
+        msg.ttl = TTL_NOW;
+        msg.mesType = [[MessageDispatcher sharedInstance] messageNameTomessageType:[responseObject objectForKey:@"action"]];
         msg.params = [responseObject objectForKey:@"data"];
         [[MessageDispatcher sharedInstance] addMessageToBus:msg];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
