@@ -6,30 +6,29 @@
 
 #import "MessageDispatcher.h"
 #import "CommManager.h"
+#import "MessageApiConverter.h"
 @implementation MessageDispatcher
 
-MessageDispatcher *sharedInstance = nil;
+static MessageDispatcher *sharedDispatcherInstance = nil;
 
 
-+ (MessageDispatcher*)sharedInstance
++ (id)sharedInstance
 {
-    @synchronized(self) {
-        if (sharedInstance == nil) {
-            [[self alloc] init]; // assignment not done here
-            
-        }
-    }
-    
+    static dispatch_once_t once;
+    static id sharedInstance;
+    dispatch_once(&once, ^{
+        sharedInstance = [[self alloc] init];
+    });
     return sharedInstance;
 }
 
 
 + (id)allocWithZone:(NSZone *)zone {
     @synchronized(self) {
-        if (sharedInstance == nil) {
-            sharedInstance = [super allocWithZone:zone];
+        if (sharedDispatcherInstance == nil) {
+            sharedDispatcherInstance = [super allocWithZone:zone];
             // assignment and return on first allocation
-            return sharedInstance;
+            return sharedDispatcherInstance;
         }
     }
     // on subsequent allocation attempts return nil
