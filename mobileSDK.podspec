@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   s.version          = "0.0.1"
   s.summary          = "A collection of libraries and frameworks supporting the mobile applications."
   s.description      = <<-DESC
-                      
+                      This is a test description.
                       
                        DESC
   s.homepage         = "https://github.com/1stpaygatewayllc/mobileSDK.git"
