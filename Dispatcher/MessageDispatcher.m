@@ -6,7 +6,7 @@
 
 #import "MessageDispatcher.h"
 #import "CommManager.h"
-#import "MessageApiConverter.h"
+
 @implementation MessageDispatcher
 
 static MessageDispatcher *sharedDispatcherInstance = nil;

@@ -24,8 +24,6 @@
 -(void)startDispatching;
 -(void)stopDispathing;
 -(NSString*)messageTypeToString:(messageType)Type;
-- (void)fetchAssetForImageID:(NSString*)imageID withBlock:(void (^)(UIImage* userimage))callbackBlock;
--(void)uploadAsset:(UIImage *)asset withBlock:(void (^)(NSString*imageID))callbackBlock;
 -(messageType)messageNameTomessageType:(NSString*)messageName;
 
 @end
