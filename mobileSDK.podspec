@@ -27,15 +27,14 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '8.0'
   s.requires_arc = true
 
-  #Networking - AFNetworking 
+  #Networking - AFNetworking
   s.subspec 'Networking' do |net|
-    net.preserve_paths = 'Networking/**'
-    net.source_files   = 'Networking/**'
+    net.preserve_paths = 'Networking/AFNetworking/*.{h,m}', 'Networking/UIKit+AFNetworking/*.{h,m}', 'Networking/*.{h,m}'
+    net.source_files   = 'Networking/AFNetworking/*.{h,m}', 'Networking/UIKit+AFNetworking/*.{h,m}', 'Networking/*.{h,m}'
   end
 
   s.subspec 'Dispatcher' do |dispatcher|
-    dispatcher.preserve_paths = 'Dispatcher/**'
-    dispatcher.source_files   = 'Dispatcher/**'
+    dispatcher.source_files   = 'Dispatcher/Model/*.{h,m}', 'Dispatcher/*.{h,m}'
   end
 
 end
