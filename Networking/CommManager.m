@@ -53,6 +53,25 @@ static CommManager *sharedSampleSingletonDelegate = nil;
     return self;
 }
 
+//message from dispatcher
+-(void)consumeMessage:(NSNotification*)notification
+{
+    Message * msg = [notification.userInfo objectForKey:@"message"];
+    NSLog(@"RBA:ConsumeMessage:%d",msg.mesType);
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:[[MessageDispatcher sharedInstance] messageTypeToString:msg.mesType] object:nil];
+    
+    switch (msg.mesType) {
+        case IngenicoMessage:
+        {
+
+        }
+            break;
+            
+        default:
+            break;
+    }
+}
+
 -(void)getAPI:(NSString*)api andParams:(NSMutableDictionary*)params{
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
@@ -63,7 +82,7 @@ static CommManager *sharedSampleSingletonDelegate = nil;
     [manager GET:fullAPI parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"JSON: %@", responseObject);
         Message *msg = [[Message alloc] init];
-        msg.mesRoute = MESSAGEROUTE_INTERNAL;
+        msg.mesRoute = MessageRouteMESSAGE_INTERNAL;
         msg.mesType = [[responseObject objectForKey:@"messageid"] intValue];
         msg.params = [responseObject objectForKey:@"data"];
         [[MessageDispatcher sharedInstance] addMessageToBus:msg];
@@ -82,7 +101,7 @@ static CommManager *sharedSampleSingletonDelegate = nil;
     [manager POST:fullAPI parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"JSON: %@", responseObject);
         Message *msg = [[Message alloc] init];
-        msg.mesRoute = MESSAGEROUTE_INTERNAL;
+        msg.mesRoute = MessageRouteMESSAGE_INTERNAL;
         msg.ttl = TTL_NOW;
         msg.mesType = [[MessageDispatcher sharedInstance] messageNameTomessageType:[responseObject objectForKey:@"action"]];
         msg.params = [responseObject objectForKey:@"data"];

@@ -6,12 +6,10 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_ENUM(NSInteger, MessageRoute) {
+    MessageRouteMESSAGE_INTERNAL,MessageRouteMESSAGE_API_GET,MessageRouteMESSAGE_API_POST,MessageRouteMESSAGE_API_PUT,MessageRouteMESSAGE_API_DELETE,MessageRouteMESSAGE_EXTERNAL,MessageRouteMESSAGE_OTHER
+};
 
-typedef enum{
-    MESSAGEROUTE_INTERNAL,
-    MESSAGEROUTE_API,
-    MESSAGEROUTE_OTHER
-}messageRoute;
 
 typedef enum{
     MESSAGETYPE_GET_CONFIG = 0,
@@ -80,7 +78,7 @@ typedef enum {
 
 @interface Message : NSObject
 
-@property(nonatomic)messageRoute mesRoute;
+@property(nonatomic)MessageRoute mesRoute;
 @property(nonatomic)messageType mesType;
 @property(nonatomic,strong)id params;
 @property(nonatomic)float ttl;

@@ -5,7 +5,8 @@
 //
 
 #import "MessageDispatcher.h"
-#import "CommManager.h"
+#import <pos-Swift.h>
+#import "POS-Bridging-Header.h"
 
 @implementation MessageDispatcher
 
@@ -152,26 +153,23 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
 
 -(void)dispatchMessage:(Message*)message
 {
+    NSMutableDictionary * messageDic = [[NSMutableDictionary alloc] init];
+    [messageDic setObject:message forKey:@"message"];
+
     switch (message.mesRoute) {
-        case MESSAGEROUTE_API:
-            if([self canSendMessage:message]){
-               [self routeMessageToServerWithType:message];
-            }
-            [dispatchedMessages addObject:message];
+        case MessageRouteMESSAGE_API_DELETE:
+        case MessageRouteMESSAGE_API_GET:
+        case MessageRouteMESSAGE_API_POST:
+        case MessageRouteMESSAGE_API_PUT:
+            //MessageA
+
             break;
-        case MESSAGEROUTE_INTERNAL:
-        {
-            NSMutableDictionary * messageDic = [[NSMutableDictionary alloc] init];
-            [messageDic setObject:message forKey:@"message"];
-            [[NSNotificationCenter defaultCenter] postNotificationName:[self messageTypeToString:message.mesType] object:nil userInfo:messageDic];
-            [dispatchedMessages addObject:message];
-        }
-            break;
-        case MESSAGEROUTE_OTHER:
-            break;
+            
         default:
             break;
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:[self messageTypeToString:message.mesType] object:nil userInfo:messageDic];
+    [dispatchedMessages addObject:message];
 }
 
 
@@ -192,7 +190,7 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
             
             break;
         case TokenForTransactionRequest:
-            [[CommManager sharedInstance] postAPI:@"Transaction/GenerateTokenForTransaction" andParams:@{@"merchantKey":[Config sharedInstance].gateway_id ,@"processorId":[AppConfiguration sharedConfig].midTidID}.mutableCopy];
+            //[[CommManager sharedInstance] postAPI:@"Transaction/GenerateTokenForTransaction" andParams:@{@"merchantKey":[Config sharedInstance].gateway_id ,@"processorId":[AppConfiguration sharedConfig].midTidID}.mutableCopy];
             break;
         default:
             break;
