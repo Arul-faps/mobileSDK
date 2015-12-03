@@ -12,31 +12,20 @@ class MessageApiConverter:NSObject  {
     
     static let sharedInstance = MessageApiConverter()
 
-
-
-    func messageTypeToString(Type: MessageRoute) -> String {
+    func messageTypeToString(Type:MessageRoute) -> String {
         var retMessage: String = ""
         
         switch (Type) {
-        case .MESSAGE_API_GET:
+        case .MessageApiGet:
             break
-            
-
-        case .MESSAGE_API_POST:
+        case .MessageApiPost:
             break
-
-        case .MESSAGE_API_DELETE:
-            break
-
-        case .MESSAGE_API_PUT:
-            break
-            
         default:
             break
 
     }
         return retMessage
     }
- 
+    
     
 }

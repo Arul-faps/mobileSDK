@@ -82,7 +82,7 @@ static CommManager *sharedSampleSingletonDelegate = nil;
     [manager GET:fullAPI parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"JSON: %@", responseObject);
         Message *msg = [[Message alloc] init];
-        msg.mesRoute = MessageRouteMESSAGE_INTERNAL;
+        msg.mesRoute = MessageRouteMessageInternal;
         msg.mesType = [[responseObject objectForKey:@"messageid"] intValue];
         msg.params = [responseObject objectForKey:@"data"];
         [[MessageDispatcher sharedInstance] addMessageToBus:msg];
@@ -101,7 +101,7 @@ static CommManager *sharedSampleSingletonDelegate = nil;
     [manager POST:fullAPI parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"JSON: %@", responseObject);
         Message *msg = [[Message alloc] init];
-        msg.mesRoute = MessageRouteMESSAGE_INTERNAL;
+        msg.mesRoute = MessageRouteMessageInternal;
         msg.ttl = TTL_NOW;
         msg.mesType = [[MessageDispatcher sharedInstance] messageNameTomessageType:[responseObject objectForKey:@"action"]];
         msg.params = [responseObject objectForKey:@"data"];

@@ -157,11 +157,11 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
     [messageDic setObject:message forKey:@"message"];
 
     switch (message.mesRoute) {
-        case MessageRouteMESSAGE_API_DELETE:
-        case MessageRouteMESSAGE_API_GET:
-        case MessageRouteMESSAGE_API_POST:
-        case MessageRouteMESSAGE_API_PUT:
-            //MessageA
+        case MessageRouteMessageApiDelete:
+        case MessageRouteMessageApiGet:
+        case MessageRouteMessageApiPost:
+        case MessageRouteMessageApiPut:
+            MessageApiConverter.sharedInstance;
 
             break;
             

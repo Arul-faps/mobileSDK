@@ -7,7 +7,13 @@
 #import <Foundation/Foundation.h>
 
 typedef NS_ENUM(NSInteger, MessageRoute) {
-    MessageRouteMESSAGE_INTERNAL,MessageRouteMESSAGE_API_GET,MessageRouteMESSAGE_API_POST,MessageRouteMESSAGE_API_PUT,MessageRouteMESSAGE_API_DELETE,MessageRouteMESSAGE_EXTERNAL,MessageRouteMESSAGE_OTHER
+    MessageRouteMessageInternal = 1,
+    MessageRouteMessageApiGet = 2,
+    MessageRouteMessageApiPost = 3,
+    MessageRouteMessageApiPut = 4,
+    MessageRouteMessageApiDelete = 5,
+    MessageRouteMessageApiExternal = 6,
+    MessageRouteMessageApiOther = 7
 };
 
 
