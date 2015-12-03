@@ -49,6 +49,10 @@ static CommManager *sharedSampleSingletonDelegate = nil;
 {
     if (self = [super init]) {
        self.imagesDownloadQueue = [[NSMutableDictionary alloc] init];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(consumeMessage:) name:[[MessageDispatcher sharedInstance] messageTypeToString:MessageRouteMessageApiDelete] object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(consumeMessage:) name:[[MessageDispatcher sharedInstance] messageTypeToString:MessageRouteMessageApiGet] object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(consumeMessage:) name:[[MessageDispatcher sharedInstance] messageTypeToString:MessageRouteMessageApiPost] object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(consumeMessage:) name:[[MessageDispatcher sharedInstance] messageTypeToString:MessageRouteMessageApiPut] object:nil];
     }
     return self;
 }
@@ -57,16 +61,18 @@ static CommManager *sharedSampleSingletonDelegate = nil;
 -(void)consumeMessage:(NSNotification*)notification
 {
     Message * msg = [notification.userInfo objectForKey:@"message"];
-    NSLog(@"RBA:ConsumeMessage:%d",msg.mesType);
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:[[MessageDispatcher sharedInstance] messageTypeToString:msg.mesType] object:nil];
     
-    switch (msg.mesType) {
-        case IngenicoMessage:
+    switch (msg.mesRoute) {
+        case MessageRouteMessageApiGet:
         {
-
+            [self getAPI:msg.messageApiEndPoint andParams:msg.params];
         }
             break;
-            
+        case MessageRouteMessageApiPost:
+        {
+            [self postAPI:msg.messageApiEndPoint andParams:msg.params];
+        }
+            break;
         default:
             break;
     }

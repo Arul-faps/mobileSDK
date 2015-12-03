@@ -8,7 +8,7 @@
 
 @implementation Message
 
-@synthesize mesRoute,mesType,params,ttl;
+@synthesize mesRoute,mesType,params,ttl,messageApiEndPoint;
 
 
 @end

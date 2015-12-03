@@ -17,60 +17,60 @@ typedef NS_ENUM(NSInteger, MessageRoute) {
 };
 
 
-typedef enum{
-    MESSAGETYPE_GET_CONFIG = 0,
-    NotSet,
-    Auth,
-    Sale,
-    Query,
-    Credit,
-    CreditRetailOnly,
-    Void,
-    VoidPartial,
-    Settle,
-    TipAdjust,
-    ReAuth,
-    ReSale,
-    ReDebit,
-    CloseBatch,
+typedef NS_ENUM(NSInteger, messageType){
+    messageTypeMESSAGETYPE_GET_CONFIG = 0,
+    messageTypeNotSet,
+    messageTypeAuth,
+    messageTypeSale,
+    messageTypeQuery,
+    messageTypeCredit,
+    messageTypeCreditRetailOnly,
+    messageTypeVoid,
+    messageTypeVoidPartial,
+    messageTypeSettle,
+    messageTypeTipAdjust,
+    messageTypeReAuth,
+    messageTypeReSale,
+    messageTypeReDebit,
+    messageTypeCloseBatch,
     
     //Ach
-    AchCredit,
-    AchDebit,
-    AchGetCategories,
-    AchCreateCategory,
-    AchUpdateCategory,
-    AchDeleteCategory,
-    AchSetupStore,
-    AchVoid,
+    messageTypeAchCredit,
+    messageTypeAchDebit,
+    messageTypeAchGetCategories,
+    messageTypeAchCreateCategory,
+    messageTypeAchUpdateCategory,
+    messageTypeAchDeleteCategory,
+    messageTypeAchSetupStore,
+    messageTypeAchVoid,
     
     //Vault
-    VaultCreateContainer,
-    VaultCreateAchRecord,
-    VaultCreateCreditCardRecord,
-    VaultCreateShippingRecord,
-    VaultDeleteContainerAndAllAsscData,
-    VaultDeleteAchRecord,
-    VaultDeleteCreditCardRecord,
-    VaultDeleteShippingRecord,
-    VaultUpdateContainer,
-    VaultUpdateAchRecord,
-    VaultUpdateCreditCardRecord,
-    VaultUpdateShippingRecord,
+    messageTypeVaultCreateContainer,
+    messageTypeVaultCreateAchRecord,
+    messageTypeVaultCreateCreditCardRecord,
+    messageTypeVaultCreateShippingRecord,
+    messageTypeVaultDeleteContainerAndAllAsscData,
+    messageTypeVaultDeleteAchRecord,
+    messageTypeVaultDeleteCreditCardRecord,
+    messageTypeVaultDeleteShippingRecord,
+    messageTypeVaultUpdateContainer,
+    messageTypeVaultUpdateAchRecord,
+    messageTypeVaultUpdateCreditCardRecord,
+    messageTypeVaultUpdateShippingRecord,
     
-    VaultQueryVault,
-    VaultQueryVaultCreditCard,
-    VaultQueryVaultAch,
-    VaultQueryVaultShippingAddr,
+    messageTypeVaultQueryVault,
+    messageTypeVaultQueryVaultCreditCard,
+    messageTypeVaultQueryVaultAch,
+    messageTypeVaultQueryVaultShippingAddr,
     
     //Misc
-    TokenToCreditCard,
-    CreditCardToToken,
-    TokenForTransaction,
-    TokenForTransactionRequest,
+    messageTypeTokenToCreditCard,
+    messageTypeCreditCardToToken,
+    messageTypeTokenForTransaction,
+    messageTypeTokenForTransactionRequest,
     
-    IngenicoMessage
-}messageType;
+    messageTypeIngenicoMessage
+};
 
 typedef enum {
     FLOATINGBUTTON_TYPE_MENU = 1,
@@ -88,5 +88,5 @@ typedef enum {
 @property(nonatomic)messageType mesType;
 @property(nonatomic,strong)id params;
 @property(nonatomic)float ttl;
-
+@property(nonatomic,strong)NSString *messageApiEndPoint;
 @end
