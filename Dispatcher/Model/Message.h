@@ -69,7 +69,9 @@ typedef NS_ENUM(NSInteger, messageType){
     messageTypeTokenForTransaction,
     messageTypeTokenForTransactionRequest,
     
-    messageTypeIngenicoMessage
+    messageTypeIngenicoMessage,
+    
+    messageTypeUserInitializeHardware
 };
 
 typedef enum {

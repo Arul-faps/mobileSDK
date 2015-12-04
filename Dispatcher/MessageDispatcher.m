@@ -144,6 +144,9 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
         case messageTypeIngenicoMessage:
             retMessage = @"IngenicoMessage";
             break;
+        case messageTypeUserInitializeHardware:
+            return @"messageTypeUserInitializeHardware";
+            break;
         default:
             break;
     }
