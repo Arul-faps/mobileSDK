@@ -71,6 +71,8 @@ typedef NS_ENUM(NSInteger, messageType){
     
     messageTypeIngenicoMessage,
     
+    messageTypeStartScanners,
+    messageTypeStopScanners,
     messageTypeUserInitializeHardware
 };
 

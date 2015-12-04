@@ -44,24 +44,9 @@ static Encryption *sharedSampleSingletonDelegate = nil;
 	return self;
 }
 
-- (id)retain {
-	return self;
-}
-
-- (unsigned)retainCount {
-	return UINT_MAX;  // denotes an object that cannot be released
-}
-
-- (void)release {
-	//do nothing
-}
-
-- (id)autorelease {
-	return self;
-}
-
 - (NSData*) encryptString:(NSString*)plaintext withKey:(NSString*)key {
-	return [[plaintext dataUsingEncoding:NSUTF8StringEncoding] AES256EncryptWithKey:key];
+    NSData * result = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
+    return [self AES256EncryptData:result WithKey:key];
 }
 
 - (NSString*) decryptData:(NSData*)ciphertext withKey:(NSString*)key {
@@ -157,9 +142,9 @@ static Encryption *sharedSampleSingletonDelegate = nil;
             return @"";
         }
         
-        CFStringRef castCFStringRef = (CFStringRef) string;
+        CFStringRef castCFStringRef = (__bridge CFStringRef) string;
         NSString* escapeString = @"!*'\"();:@&=+$,/?%#[]% ";
-        CFStringRef castescapeString = (CFStringRef)escapeString;
+        CFStringRef castescapeString = (__bridge CFStringRef)escapeString;
         
         
         CFStringRef cfstringEncodedString = CFURLCreateStringByAddingPercentEscapes(NULL,
@@ -168,7 +153,7 @@ static Encryption *sharedSampleSingletonDelegate = nil;
                                                                                     castescapeString,
                                                                                     CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
         
-        NSString* pEncodedNSString = (NSString*)cfstringEncodedString;
+        NSString* pEncodedNSString = (__bridge NSString*)cfstringEncodedString;
         
         output_string = [NSString stringWithFormat:@"%@",pEncodedNSString];
         
@@ -211,44 +196,39 @@ static Encryption *sharedSampleSingletonDelegate = nil;
     return(NULL);
 }
 
-@end
-
-@implementation NSData (AES256)
-
-
-- (NSData *)AES256EncryptWithKey:(NSString *)key {
-	// 'key' should be 32 bytes for AES256, will be null-padded otherwise
-	char keyPtr[kCCKeySizeAES256+1]; // room for terminator (unused)
-	bzero(keyPtr, sizeof(keyPtr)); // fill with zeroes (for padding)
-	
-	// fetch key data
-	[key getCString:keyPtr maxLength:sizeof(keyPtr) encoding:NSUTF8StringEncoding];
-	
-	NSUInteger dataLength = [self length];
-	
-	//See the doc: For block ciphers, the output size will always be less than or 
-	//equal to the input size plus the size of one block.
-	//That's why we need to add the size of one block here
-	size_t bufferSize = dataLength + kCCBlockSizeAES128;
-	void *buffer = malloc(bufferSize);
-	
-	size_t numBytesEncrypted = 0;
-	CCCryptorStatus cryptStatus = CCCrypt(kCCEncrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
-										  keyPtr, kCCKeySizeAES256,
-										  NULL /* initialization vector (optional) */,
-										  [self bytes], dataLength, /* input */
-										  buffer, bufferSize, /* output */
-										  &numBytesEncrypted);
-	if (cryptStatus == kCCSuccess) {
-		//the returned NSData takes ownership of the buffer and will free it on deallocation
-		return [NSData dataWithBytesNoCopy:buffer length:numBytesEncrypted];
-	}
-	
-	free(buffer); //free the buffer;
-	return nil;
+- (NSData *)AES256EncryptData:(NSData*)dataToEncrypt WithKey:(NSString *)key {
+    // 'key' should be 32 bytes for AES256, will be null-padded otherwise
+    char keyPtr[kCCKeySizeAES256+1]; // room for terminator (unused)
+    bzero(keyPtr, sizeof(keyPtr)); // fill with zeroes (for padding)
+    
+    // fetch key data
+    [key getCString:keyPtr maxLength:sizeof(keyPtr) encoding:NSUTF8StringEncoding];
+    
+    NSUInteger dataLength = [dataToEncrypt length];
+    
+    //See the doc: For block ciphers, the output size will always be less than or
+    //equal to the input size plus the size of one block.
+    //That's why we need to add the size of one block here
+    size_t bufferSize = dataLength + kCCBlockSizeAES128;
+    void *buffer = malloc(bufferSize);
+    
+    size_t numBytesEncrypted = 0;
+    CCCryptorStatus cryptStatus = CCCrypt(kCCEncrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
+                                          keyPtr, kCCKeySizeAES256,
+                                          NULL /* initialization vector (optional) */,
+                                          [dataToEncrypt bytes], dataLength, /* input */
+                                          buffer, bufferSize, /* output */
+                                          &numBytesEncrypted);
+    if (cryptStatus == kCCSuccess) {
+        //the returned NSData takes ownership of the buffer and will free it on deallocation
+        return [NSData dataWithBytesNoCopy:buffer length:numBytesEncrypted];
+    }
+    
+    free(buffer); //free the buffer;
+    return nil;
 }
 
-- (NSData*)AES256DecryptWithKey:(NSString*)key {
+- (NSData*)AES256Decrypt:(NSData*)dataToDecrypt WithKey:(NSString *)key {
     // 'key' should be 32 bytes for AES256, will be null-padded otherwise
     char keyPtr[kCCKeySizeAES256 + 1]; // room for terminator (unused)
     bzero(keyPtr, sizeof(keyPtr)); // fill with zeroes (for padding)
@@ -256,7 +236,7 @@ static Encryption *sharedSampleSingletonDelegate = nil;
     // fetch key data
     [key getCString:keyPtr maxLength:sizeof(keyPtr) encoding:NSUTF8StringEncoding];
     
-    NSUInteger dataLength = [self length];
+    NSUInteger dataLength = [dataToDecrypt length];
     
     //See the doc: For block ciphers, the output size will always be less than or
     //equal to the input size plus the size of one block.
@@ -268,7 +248,7 @@ static Encryption *sharedSampleSingletonDelegate = nil;
     CCCryptorStatus cryptStatus = CCCrypt(kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
                                           keyPtr, kCCKeySizeAES256,
                                           NULL /* initialization vector (optional) */,
-                                          [self bytes], dataLength, /* input */
+                                          [dataToDecrypt bytes], dataLength, /* input */
                                           buffer, bufferSize, /* output */
                                           &numBytesDecrypted);
     
@@ -282,7 +262,7 @@ static Encryption *sharedSampleSingletonDelegate = nil;
     return nil;
 }
 
-- (NSMutableData *) decryptWithAES128Key: (NSString *) key {
+- (NSMutableData *) decryptData:(NSData*)data WithAES128Key: (NSString *) key {
     CCCryptorStatus ccStatus = kCCSuccess;
     // Symmetric crypto reference.
     CCCryptorRef thisEncipher = NULL;
@@ -306,7 +286,7 @@ static Encryption *sharedSampleSingletonDelegate = nil;
     // Initialization vector; dummy in this case 0's.
     uint8_t iv[kCCBlockSizeAES128];
     memset((void *) iv, 0x0, (size_t) sizeof(iv));
-    plainTextBufferSize = [self length];
+    plainTextBufferSize = [data length];
     
     ccStatus = CCCryptorCreate(kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding, (const void *)[key UTF8String], kCCKeySizeAES128, (const void *)iv, &thisEncipher);
     
@@ -327,7 +307,7 @@ static Encryption *sharedSampleSingletonDelegate = nil;
     remainingBytes = bufferPtrSize;
     
     // Actually perform the encryption or decryption.
-    ccStatus = CCCryptorUpdate(thisEncipher, (const void *) [self bytes], plainTextBufferSize, ptr, remainingBytes, &movedBytes);
+    ccStatus = CCCryptorUpdate(thisEncipher, (const void *) [data bytes], plainTextBufferSize, ptr, remainingBytes, &movedBytes);
     
     ptr += movedBytes;
     remainingBytes -= movedBytes;
@@ -347,10 +327,6 @@ static Encryption *sharedSampleSingletonDelegate = nil;
     
     return [NSMutableData dataWithData:cipherOrPlainText];
 }
-
-
-
-
 
 
 @end

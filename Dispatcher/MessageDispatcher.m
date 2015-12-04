@@ -147,6 +147,12 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
         case messageTypeUserInitializeHardware:
             return @"messageTypeUserInitializeHardware";
             break;
+        case messageTypeStartScanners:
+            return @"messageTypeStartScanners";
+            break;
+        case messageTypeStopScanners:
+            return @"messageTypeStopScanners";
+            break;
         default:
             break;
     }
