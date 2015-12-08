@@ -153,6 +153,9 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
         case messageTypeStopScanners:
             return @"messageTypeStopScanners";
             break;
+        case messageTypeProductScanned:
+            return @"messageTypeProductScanned";
+            break;
         default:
             break;
     }
