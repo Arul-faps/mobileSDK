@@ -73,8 +73,8 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
         NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
         [userInfo setObject:newmessage forKey:@"message"];
         dispatch_async(dispatch_get_main_queue(), ^{
-        NSTimer * scheduled = [NSTimer scheduledTimerWithTimeInterval:newmessage.ttl target:self selector:@selector(dispatchThisMessage:) userInfo:userInfo repeats:NO];
-            });
+            [NSTimer scheduledTimerWithTimeInterval:newmessage.ttl target:self selector:@selector(dispatchThisMessage:) userInfo:userInfo repeats:NO];
+        });
     }
 }
 
