@@ -118,4 +118,38 @@ static CommManager *sharedSampleSingletonDelegate = nil;
 }
 
 
+
+- (void)batchOperationsAPI:(NSString*)api andRequestOperations:(NSArray*)requestOperations {
+    
+    //[self cancelAndDiscardURLConnection];
+    
+    //    [self checkReachability];
+    
+    NSArray *operations = [AFURLConnectionOperation batchOfRequestOperations:requestOperations
+                                                               progressBlock:^(NSUInteger numberOfFinishedOperations, NSUInteger totalNumberOfOperations) {
+                                                                   NSLog(@"%lu of %lu Completed", (unsigned long)numberOfFinishedOperations, (unsigned long)totalNumberOfOperations);
+                                                               } completionBlock:^(NSArray *operations) {
+                                                                    NSLog(@"Completion: %@", operations);
+                                                                    [operations enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                                                                        AFHTTPRequestOperation *afReqObject = (AFHTTPRequestOperation *)obj;
+                                                                        id responseObject = [afReqObject responseObject];
+                                                                        
+                                                                        
+                                                                        NSLog(@"Operation: %@", [afReqObject responseString]);
+                                                                        
+                                                                        Message *msg = [[Message alloc] init];
+                                                                        msg.mesRoute = MessageRouteMessageInternal;
+                                                                        msg.ttl = TTL_NOW;
+                                                                        msg.mesType = [[MessageDispatcher sharedInstance] messageNameTomessageType:@"OnHoldOrderMessage"];
+                                                                        msg.params = [responseObject objectForKey:@"data"];
+                                                                        [[MessageDispatcher sharedInstance] addMessageToBus:msg];
+                                                                    }];
+                                                                   
+
+                                                               }];
+    
+    [[NSOperationQueue mainQueue] addOperations:operations waitUntilFinished:NO];
+}
+
+
 @end

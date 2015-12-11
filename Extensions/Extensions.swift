@@ -32,4 +32,12 @@ extension String {
         }
         return nil
     }
+    
+    func urlEncodedString() -> String? {
+        let customAllowedSet =  NSCharacterSet.URLQueryAllowedCharacterSet()
+        let escapedString = self.stringByAddingPercentEncodingWithAllowedCharacters(customAllowedSet)
+        return escapedString
+    }
+
+
 }

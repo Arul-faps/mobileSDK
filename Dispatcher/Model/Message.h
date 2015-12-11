@@ -75,7 +75,10 @@ typedef NS_ENUM(NSInteger, messageType){
     messageTypeStopScanners,
     messageTypeUserInitializeHardware,
     
-    messageTypeProductScanned
+    messageTypeProductScanned,
+    
+    messageTypeOnHoldOrderSync,
+    messageTypeOnHoldOrdersBatchSync
 };
 
 typedef enum {
