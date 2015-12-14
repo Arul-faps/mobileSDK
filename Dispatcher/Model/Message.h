@@ -86,7 +86,7 @@ typedef enum {
 }FLOATINGBUTTONTYPE;
 
 #define DEFAULT_TTL 5.0
-#define TTL_NOW 0.5;
+#define TTL_NOW 0.1;
 #define CLEANUP_TIMER 10.0
 
 
