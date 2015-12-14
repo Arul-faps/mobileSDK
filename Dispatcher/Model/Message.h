@@ -75,7 +75,9 @@ typedef NS_ENUM(NSInteger, messageType){
     messageTypeStopScanners,
     messageTypeUserInitializeHardware,
     
-    messageTypeProductScanned
+    messageTypeProductScanned,
+    messageTypeGotoPortal,
+    messageTypeComebackFromPortal
 };
 
 typedef enum {

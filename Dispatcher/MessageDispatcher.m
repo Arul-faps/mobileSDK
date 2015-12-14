@@ -156,6 +156,12 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
         case messageTypeProductScanned:
             return @"messageTypeProductScanned";
             break;
+        case messageTypeGotoPortal:
+            return @"messageTypeGotoPortal";
+            break;
+        case messageTypeComebackFromPortal:
+            return @"messageTypeComebackFromPortal";
+            break;
         default:
             break;
     }
