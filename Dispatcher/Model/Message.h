@@ -77,7 +77,10 @@ typedef NS_ENUM(NSInteger, messageType){
     
     messageTypeProductScanned,
     messageTypeGotoPortal,
-    messageTypeComebackFromPortal
+    messageTypeComebackFromPortal,
+    
+    messageTypeAskToUpdateFirmware,
+    messageTypeStartUpdatingFirmware
 };
 
 typedef enum {
