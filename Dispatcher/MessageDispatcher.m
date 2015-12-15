@@ -159,11 +159,17 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
         case messageTypeProductScanned:
             return @"messageTypeProductScanned";
             break;
-        case messageTypeOnHoldOrdersBatchedSync:
+        case messageTypeOnHoldOrdersBatchSync:
             return @"messageTypeOnHoldOrdersBatchedSync";
             break;
         case messageTypeOnHoldOrderSync:
             return @"messageTypeOnHoldOrderSync";
+        case messageTypeGotoPortal:
+            return @"messageTypeGotoPortal";
+            break;
+        case messageTypeComebackFromPortal:
+            return @"messageTypeComebackFromPortal";
+
             break;
         default:
             break;

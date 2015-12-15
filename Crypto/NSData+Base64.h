@@ -17,7 +17,8 @@
  contents of the Base 64 encoded string. This is a convenience method.
  @param	inBase64String	An NSString object that contains only Base 64 encoded data.
  @result	The NSData object. */
-+ (NSData *) dataWithBase64EncodedString:(NSString *) string;
++ (NSData*)dataWithBase64EncodedString:(NSString *)string NS_SWIFT_NAME(data(base64EncodedString:));
+//+ (NSData*)dataWithBase64EncodedString:(NSString *)string;
 
 /*!	@function	-initWithBase64EncodedString:
  @discussion	The NSData object is initialized with the contents of the Base 64 encoded string.

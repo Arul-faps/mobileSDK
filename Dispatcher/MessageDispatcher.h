@@ -13,8 +13,6 @@
     NSMutableArray * messageBus;
     
     NSMutableArray * dispatchedMessages;
-    
-    void (^uploadFinishedBlock)(NSString*imageID);
     NSMutableArray *queueCallbacks;
 }
 
