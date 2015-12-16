@@ -10,4 +10,7 @@ import UIKit
 
 class PolymorphicPrinterService: NSObject {
 
+    func startService(){}
+    
+    func consumeMessage(notif:NSNotification){}
 }

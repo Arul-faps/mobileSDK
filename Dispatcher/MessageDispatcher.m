@@ -171,6 +171,12 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
             return @"messageTypeComebackFromPortal";
 
             break;
+        case messageTypeAskToUpdateFirmware:
+            return @"messageTypeAskToUpdateFirmware";
+            break;
+        case messageTypeStartUpdatingFirmware:
+            return @"messageTypeStartUpdatingFirmware";
+            break;
         default:
             break;
     }

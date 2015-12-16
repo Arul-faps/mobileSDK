@@ -81,7 +81,11 @@ typedef NS_ENUM(NSInteger, messageType){
     messageTypeOnHoldOrdersBatchSync,
 
     messageTypeGotoPortal,
-    messageTypeComebackFromPortal
+
+    messageTypeComebackFromPortal,
+    
+    messageTypeAskToUpdateFirmware,
+    messageTypeStartUpdatingFirmware
 
 };
 
