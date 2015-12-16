@@ -8,7 +8,23 @@
 
 @implementation Message
 
-@synthesize mesRoute,mesType,params,ttl,messageApiEndPoint;
+@synthesize routingKey,params,ttl,messageApiEndPoint;
 
+-(NSString*)routeFromRoutingKey
+{
+    NSMutableArray * keyitems = [self.routingKey componentsSeparatedByString:@"."].mutableCopy;
+    if(keyitems){
+        return keyitems[0];
+    }
+    return @"";
+}
 
+-(NSString*)messageFromRoutingKey
+{
+    NSMutableArray * keyitems = [self.routingKey componentsSeparatedByString:@"."].mutableCopy;
+    if(keyitems){
+        return [keyitems lastObject];
+    }
+    return @"";
+}
 @end

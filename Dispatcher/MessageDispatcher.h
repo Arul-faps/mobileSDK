@@ -21,7 +21,5 @@
 -(void)addMessageToBus:(Message*)newmessage;
 -(void)startDispatching;
 -(void)stopDispathing;
--(NSString*)messageTypeToString:(messageType)Type;
--(messageType)messageNameTomessageType:(NSString*)messageName;
 
 @end

@@ -7,6 +7,7 @@
 #import "MessageDispatcher.h"
 #import <pos-Swift.h>
 #import "POS-Bridging-Header.h"
+#import "RegexKitLite.h"
 
 @implementation MessageDispatcher
 
@@ -116,85 +117,18 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
 }
 
 
--(messageType)messageNameTomessageType:(NSString*)messageName
-{
-    if([messageName caseInsensitiveCompare:@"TokenForTransaction"] == NSOrderedSame){
-        return messageTypeTokenForTransaction;
-    }
-    else if([messageName caseInsensitiveCompare:@"IngenicoMessage"] == NSOrderedSame){
-        return messageTypeIngenicoMessage;
-    }
-    
-    return -1;
-}
-
--(NSString*)messageTypeToString:(messageType)Type
-{
-    NSString *retMessage = @"";
-    switch (Type) {
-        case messageTypeMESSAGETYPE_GET_CONFIG:
-            retMessage = @"MESSAGETYPE_GET_CONFIG";
-            break;
-        case messageTypeTokenForTransactionRequest:
-            retMessage = @"TokenForTransactionRequest";
-            break;
-        case messageTypeTokenForTransaction:
-            retMessage = @"TokenForTransaction";
-            break;
-        case messageTypeIngenicoMessage:
-            retMessage = @"IngenicoMessage";
-            break;
-        case messageTypeUserInitializeHardware:
-            return @"messageTypeUserInitializeHardware";
-            break;
-        case messageTypeStartScanners:
-            return @"messageTypeStartScanners";
-            break;
-        case messageTypeStopScanners:
-            return @"messageTypeStopScanners";
-            break;
-        case messageTypeProductScanned:
-            return @"messageTypeProductScanned";
-            break;
-        case messageTypeGotoPortal:
-            return @"messageTypeGotoPortal";
-            break;
-        case messageTypeComebackFromPortal:
-            return @"messageTypeComebackFromPortal";
-            break;
-        case messageTypeAskToUpdateFirmware:
-            return @"messageTypeAskToUpdateFirmware";
-            break;
-        case messageTypeStartUpdatingFirmware:
-            return @"messageTypeStartUpdatingFirmware";
-            break;
-        default:
-            break;
-    }
-    
-    return retMessage;
-}
 
 -(void)dispatchMessage:(Message*)message
 {
     NSMutableDictionary * messageDic = [[NSMutableDictionary alloc] init];
     
 
-    switch (message.mesRoute) {
-        case MessageRouteMessageApiDelete:
-        case MessageRouteMessageApiGet:
-        case MessageRouteMessageApiPost:
-        case MessageRouteMessageApiPut:
-            message.messageApiEndPoint = [MessageApiConverter.sharedInstance messageTypeToApiCall:message.mesType];
-
-            break;
-            
-        default:
-            break;
+    if([[message routeFromRoutingKey] caseInsensitiveCompare:@"api"] == NSOrderedSame){
+        message.messageApiEndPoint = [MessageApiConverter.sharedInstance messageTypeToApiCall:message.routingKey];
     }
     
     [messageDic setObject:message forKey:@"message"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:[self messageTypeToString:message.mesType] object:nil userInfo:messageDic];
+    [[NSNotificationCenter defaultCenter] postNotificationName:message.routingKey object:nil userInfo:messageDic];
     [dispatchedMessages addObject:message];
 }
 
@@ -210,17 +144,6 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
     if(sectoken && sectoken.length > 0){
         [message.params setObject:sectoken forKey:@"securitytoken"];
     }
-    
-    switch (message.mesType) {
-        case messageTypeMESSAGETYPE_GET_CONFIG:
-            
-            break;
-        case messageTypeTokenForTransactionRequest:
-            //[[CommManager sharedInstance] postAPI:@"Transaction/GenerateTokenForTransaction" andParams:@{@"merchantKey":[Config sharedInstance].gateway_id ,@"processorId":[AppConfiguration sharedConfig].midTidID}.mutableCopy];
-            break;
-        default:
-            break;
-    }
 }
 
 
@@ -228,14 +151,6 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
 
 -(BOOL)canSendMessage:(Message*)message
 {
-    switch (message.mesType) {
-        case messageTypeMESSAGETYPE_GET_CONFIG:
-        case messageTypeTokenForTransactionRequest:
-        break;
-        default:
-            break;
-    }
-    
     return YES;
 }
 
