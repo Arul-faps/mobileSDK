@@ -159,17 +159,35 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
         case messageTypeProductScanned:
             return @"messageTypeProductScanned";
             break;
-        case messageTypeOnHoldOrdersBatchSync:
-            return @"messageTypeOnHoldOrdersBatchedSync";
+            // ---------------------
+            // ON HOLD ORDERS
+            // ---------------------
+        case messageTypeOnHoldOrdersSyncBatch:
+            return @"messageTypeOnHoldOrdersSyncBatch";
             break;
-        case messageTypeOnHoldOrderSync:
-            return @"messageTypeOnHoldOrderSync";
+        case messageTypeOnHoldOrdersSyncSingle:
+            return @"messageTypeOnHoldOrdersSyncSingle";
+            break;
+            // ---------------------
+            // ON HOLD ORDERS ACTIONS
+            // ---------------------
+        case messageTypeOnHoldOrdersActionPost:
+            return @"messageTypeOnHoldOrdersActionPost";
+            break;
+        case messageTypeOnHoldOrdersActionDelete:
+            return @"messageTypeOnHoldOrdersActionDelete";
+            break;
+        case messageTypeOnHoldOrdersActionGet:
+            return @"messageTypeOnHoldOrdersActionGet";
+            break;
+            // ---------------------
+            // PORTAL
+            // ---------------------
         case messageTypeGotoPortal:
             return @"messageTypeGotoPortal";
             break;
         case messageTypeComebackFromPortal:
             return @"messageTypeComebackFromPortal";
-
             break;
         case messageTypeAskToUpdateFirmware:
             return @"messageTypeAskToUpdateFirmware";

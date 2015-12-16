@@ -76,10 +76,18 @@ typedef NS_ENUM(NSInteger, messageType){
     messageTypeUserInitializeHardware,
     
     messageTypeProductScanned,
+    // ---------------------
+    // ON HOLD ORDERS
+    // ---------------------
+    messageTypeOnHoldOrdersSyncSingle,
+    messageTypeOnHoldOrdersSyncBatch,
     
-    messageTypeOnHoldOrderSync,
-    messageTypeOnHoldOrdersBatchSync,
-
+    // ON HOLD ORDERS ACTIONS
+    messageTypeOnHoldOrdersActionPost,
+    messageTypeOnHoldOrdersActionDelete,
+    messageTypeOnHoldOrdersActionGet,
+    
+    
     messageTypeGotoPortal,
 
     messageTypeComebackFromPortal,
