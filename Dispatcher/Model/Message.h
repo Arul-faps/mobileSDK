@@ -80,7 +80,9 @@ typedef NS_ENUM(NSInteger, messageType){
     // ON HOLD ORDERS
     // ---------------------
     messageTypeOnHoldOrdersSyncSingle,
+    messageTypeOnHoldOrdersSyncSingleResponse,
     messageTypeOnHoldOrdersSyncBatch,
+    messageTypeOnHoldOrdersSyncBatchResponse,
     
     // ON HOLD ORDERS ACTIONS
     messageTypeOnHoldOrdersActionPost,
