@@ -22,7 +22,7 @@ class PolymorphicPrinterService: NSObject {
     
     func detectPrinters() -> [EAAccessory] {
         printersList = EAAccessoryManager.sharedAccessoryManager().connectedAccessories
-        
+        NSLog("Detected Devices %@", printersList)
         return printersList
     }
 }
