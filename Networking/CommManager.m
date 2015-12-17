@@ -47,6 +47,7 @@ static CommManager *sharedSampleSingletonDelegate = nil;
 
 -(id)init
 {
+    NSLog(@"Running CommManager init....");
     if (self = [super init]) {
        self.imagesDownloadQueue = [[NSMutableDictionary alloc] init];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(consumeMessage:) name:[[MessageDispatcher sharedInstance] messageTypeToString:MessageRouteMessageApiDelete] object:nil];
@@ -71,6 +72,11 @@ static CommManager *sharedSampleSingletonDelegate = nil;
         case MessageRouteMessageApiPost:
         {
             [self postAPI:msg.messageApiEndPoint andParams:msg.params];
+        }
+            break;
+        case MessageRouteMessageApiBatchPost:
+        {
+            [self batchPostAPI:msg.messageApiEndPoint andParams:msg.params];
         }
             break;
         default:
@@ -118,37 +124,83 @@ static CommManager *sharedSampleSingletonDelegate = nil;
 }
 
 
+/**
+    Handle Batch POSTs
+ 
+  - Parameter api:   The API endpoint.
+  - Parameter params:   The message parameter list.
+ */
+-(void)batchPostAPI:(NSString*)api andParams:(NSArray*)paramsList {
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
+    
 
-- (void)batchOperationsAPI:(NSString*)api andRequestOperations:(NSArray*)requestOperations {
-    
-    //[self cancelAndDiscardURLConnection];
-    
-    //    [self checkReachability];
-    
-    NSArray *operations = [AFURLConnectionOperation batchOfRequestOperations:requestOperations
-                                                               progressBlock:^(NSUInteger numberOfFinishedOperations, NSUInteger totalNumberOfOperations) {
-                                                                   NSLog(@"%lu of %lu Completed", (unsigned long)numberOfFinishedOperations, (unsigned long)totalNumberOfOperations);
-                                                               } completionBlock:^(NSArray *operations) {
-                                                                    NSLog(@"Completion: %@", operations);
-                                                                    [operations enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                                                                        AFHTTPRequestOperation *afReqObject = (AFHTTPRequestOperation *)obj;
-                                                                        id responseObject = [afReqObject responseObject];
-                                                                        
-                                                                        
-                                                                        NSLog(@"Operation: %@", [afReqObject responseString]);
-                                                                        
-                                                                        Message *msg = [[Message alloc] init];
-                                                                        msg.mesRoute = MessageRouteMessageInternal;
-                                                                        msg.ttl = TTL_NOW;
-                                                                        msg.mesType = [[MessageDispatcher sharedInstance] messageNameTomessageType:@"OnHoldOrderMessage"];
-                                                                        msg.params = [responseObject objectForKey:@"data"];
-                                                                        [[MessageDispatcher sharedInstance] addMessageToBus:msg];
-                                                                    }];
-                                                                   
+    NSArray *requestOperations = [CommManager buildRequestOperationsForApi:api withParamsList:paramsList];
 
-                                                               }];
     
-    [[NSOperationQueue mainQueue] addOperations:operations waitUntilFinished:NO];
+    if (requestOperations.count>0) {
+        NSArray *operations = [AFURLConnectionOperation batchOfRequestOperations:requestOperations
+                                                                   progressBlock:^(NSUInteger numberOfFinishedOperations, NSUInteger totalNumberOfOperations) {
+                                                                       NSLog(@"%lu of %lu Completed", (unsigned long)numberOfFinishedOperations, (unsigned long)totalNumberOfOperations);
+                                                                   } completionBlock:^(NSArray *operations) {
+                                                                       NSLog(@"Completion: %@", operations);
+                                                                       [operations enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                                                                           AFHTTPRequestOperation *afReqObject = (AFHTTPRequestOperation *)obj;
+                                                                           id responseObject = [afReqObject responseObject];
+                                                                           
+                                                                           
+                                                                           NSLog(@"Operation: %@", [afReqObject responseString]);
+                                                                           
+//                                                                           Message *msg = [[Message alloc] init];
+//                                                                           msg.mesRoute = MessageRouteMessageInternal;
+//                                                                           msg.ttl = TTL_NOW;
+//                                                                           msg.mesType = [[MessageDispatcher sharedInstance] messageNameTomessageType:@"OnHoldOrderMessage"];
+//                                                                           msg.params = [responseObject objectForKey:@"data"];
+//                                                                           [[MessageDispatcher sharedInstance] addMessageToBus:msg];
+                                                                       }];
+                                                                       
+                                                                       
+                                                                   }];
+        
+        [[NSOperationQueue mainQueue] addOperations:operations waitUntilFinished:NO];
+    }
+
+}
+
+/**
+    Build a set of request operations for AFNetworking.
+    Need to format these request as form data (not JSON) since implementing the older WS model.
+    NOTE: When new API implemented, use JSON.
+ 
+ - Parameter api:   The API endpoint.
+ - Parameter params:   The message parameter list.
+ */
++ (NSArray*)buildRequestOperationsForApi:(NSString*)api withParamsList:(NSArray*)paramsList
+{
+    NSMutableArray *mutableOperations = [NSMutableArray new];
+    NSString *fullAPI = api;
+    
+    for (NSDictionary *params in paramsList) {
+        
+        // FORM DATA AF REQUEST
+        NSURLRequest *request = [[AFHTTPRequestSerializer serializer] multipartFormRequestWithMethod:@"POST" URLString:fullAPI parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+            [params enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, NSString*  _Nonnull obj, BOOL * _Nonnull stop) {
+                NSLog(@"key: %@", key);
+                NSLog(@"value: %@", [obj dataUsingEncoding:NSUTF8StringEncoding]);
+                [formData appendPartWithFormData:[obj dataUsingEncoding:NSUTF8StringEncoding] name:key];
+            }];
+           
+        } error:nil];
+        
+        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        
+        [mutableOperations addObject:operation];
+    }
+    
+    
+    return [mutableOperations copy];
 }
 
 

@@ -13,7 +13,9 @@ typedef NS_ENUM(NSInteger, MessageRoute) {
     MessageRouteMessageApiPut = 4,
     MessageRouteMessageApiDelete = 5,
     MessageRouteMessageApiExternal = 6,
-    MessageRouteMessageApiOther = 7
+    MessageRouteMessageApiOther = 7,
+    MessageRouteMessageApiBatchGet = 8,
+    MessageRouteMessageApiBatchPost = 9
 };
 
 

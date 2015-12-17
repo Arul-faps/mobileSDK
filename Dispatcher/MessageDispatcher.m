@@ -7,6 +7,7 @@
 #import "MessageDispatcher.h"
 #import <pos-Swift.h>
 #import "POS-Bridging-Header.h"
+#import "CommManager.h"
 
 @implementation MessageDispatcher
 
@@ -215,14 +216,35 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
             message.messageApiEndPoint = [MessageApiConverter.sharedInstance messageTypeToApiCall:message.mesType];
 
             break;
+        case MessageRouteMessageApiBatchPost:
+        case MessageRouteMessageApiBatchGet:
+            message.messageApiEndPoint = @"https://secure-qa.goemerchant.com/secure/mobilepos/v99/ios/mobilepos.ashx";
             
+            break;
         default:
             break;
     }
     
-    [messageDic setObject:message forKey:@"message"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:[self messageTypeToString:message.mesType] object:nil userInfo:messageDic];
-    [dispatchedMessages addObject:message];
+    switch (message.mesRoute) {
+        case MessageRouteMessageApiBatchPost:
+        case MessageRouteMessageApiBatchGet:
+            [self routeMessageToServerWithType:message];
+     
+            break;
+        default:
+            
+            [messageDic setObject:message forKey:@"message"];
+            [[NSNotificationCenter defaultCenter] postNotificationName:[self messageTypeToString:message.mesType] object:nil userInfo:messageDic];
+            [dispatchedMessages addObject:message];
+            break;
+    }
+    
+    // GOS: Temporarily commented  out below in order handle internal routing of a batch request for On Hold Order message type.
+    // It appears that message type below would prevent it from posting a batch request to the Comm Manager
+    
+//    [messageDic setObject:message forKey:@"message"];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:[self messageTypeToString:message.mesType] object:nil userInfo:messageDic];
+//    [dispatchedMessages addObject:message];
 }
 
 
@@ -234,17 +256,24 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
     
     NSString * sectoken = [[NSUserDefaults standardUserDefaults] objectForKey:@"securitytoken"];
     
-    if(sectoken && sectoken.length > 0){
-        [message.params setObject:sectoken forKey:@"securitytoken"];
-    }
-    
     switch (message.mesType) {
         case messageTypeMESSAGETYPE_GET_CONFIG:
             
             break;
         case messageTypeTokenForTransactionRequest:
+            
+
+            
+            if(sectoken && sectoken.length > 0){
+                [message.params setObject:sectoken forKey:@"securitytoken"];
+            }
             //[[CommManager sharedInstance] postAPI:@"Transaction/GenerateTokenForTransaction" andParams:@{@"merchantKey":[Config sharedInstance].gateway_id ,@"processorId":[AppConfiguration sharedConfig].midTidID}.mutableCopy];
             break;
+        
+        case messageTypeOnHoldOrdersSyncBatch:
+            [[CommManager sharedInstance] batchPostAPI:message.messageApiEndPoint andParams:message.params];
+            break;
+            
         default:
             break;
     }

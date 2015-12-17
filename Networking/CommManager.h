@@ -41,5 +41,7 @@
 -(void)uploadImage:(NSURL *)imageUrl andAssetName:(NSString*)assetName andAssetSize:(NSNumber*)assetSize withDelegate:(id)theDelegate;
 -(void)downloadAssetFromS3WithName:(NSString*)name andSavingUrl:(NSURL*)savingUrl withDelegate:(id)theDelegate;
 
+-(void)batchPostAPI:(NSString*)api andParams:(NSArray*)paramsList;
+
 @property(nonatomic,retain)NSMutableDictionary *imagesDownloadQueue;
 @end
