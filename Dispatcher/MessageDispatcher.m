@@ -122,9 +122,8 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
 {
     NSMutableDictionary * messageDic = [[NSMutableDictionary alloc] init];
     
-
     if([[message routeFromRoutingKey] caseInsensitiveCompare:@"api"] == NSOrderedSame){
-        message.messageApiEndPoint = [MessageApiConverter.sharedInstance messageTypeToApiCall:message.routingKey];
+        [MessageApiConverter.sharedInstance messageTypeToApiCall:message];
     }
     
     [messageDic setObject:message forKey:@"message"];

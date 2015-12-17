@@ -10,7 +10,19 @@ import UIKit
 
 class PolymorphicPrinterService: NSObject {
 
+    var printersList = [EAAccessory]()
+    
+
+    
     func startService(){}
     
     func consumeMessage(notif:NSNotification){}
+    
+    func printerDidConnect(notif:NSNotification){}
+    
+    func detectPrinters() -> [EAAccessory] {
+        printersList = EAAccessoryManager.sharedAccessoryManager().connectedAccessories
+        
+        return printersList
+    }
 }

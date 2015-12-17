@@ -14,6 +14,7 @@
 @interface Message : NSObject
 
 @property(nonatomic,strong)NSString *routingKey;
+@property(nonatomic,strong)NSString *httpMethod;
 @property(nonatomic,strong)id params;
 @property(nonatomic)float ttl;
 @property(nonatomic,strong)NSString *messageApiEndPoint;

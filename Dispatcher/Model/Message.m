@@ -8,7 +8,7 @@
 
 @implementation Message
 
-@synthesize routingKey,params,ttl,messageApiEndPoint;
+@synthesize routingKey,params,ttl,messageApiEndPoint,httpMethod;
 
 -(NSString*)routeFromRoutingKey
 {
