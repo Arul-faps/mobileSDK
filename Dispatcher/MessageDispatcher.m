@@ -126,7 +126,7 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
         return messageTypeIngenicoMessage;
     }
     else if([messageName caseInsensitiveCompare:@"OnHoldOrderMessage"] == NSOrderedSame){
-        return messageTypeIngenicoMessage;
+        return messageTypeOnHoldOrdersSyncBatch;
     }
     
     return -1;

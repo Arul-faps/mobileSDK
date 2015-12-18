@@ -48,6 +48,7 @@ extension DbLocalError: CustomStringConvertible {
         case ErrorOnInsert: return "Error on INSERT"
         case ErrorOnUpdate: return "Error on UPDATE"
         case ErrorOnDelete: return "Error on DELETE"
+        case ErrorOnFetch: return "Error on FETCH"
         case ErrorUnKnown: return "Unknown Error"
         }
     }

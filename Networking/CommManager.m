@@ -146,21 +146,36 @@ static CommManager *sharedSampleSingletonDelegate = nil;
                                                                        NSLog(@"%lu of %lu Completed", (unsigned long)numberOfFinishedOperations, (unsigned long)totalNumberOfOperations);
                                                                    } completionBlock:^(NSArray *operations) {
                                                                        NSLog(@"Completion: %@", operations);
+                                                                       
+                                                                       NSMutableArray *responseList =[NSMutableArray new];
+                                                                       
+                                                                       // Build an array of the response dictionaries
                                                                        [operations enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
                                                                            AFHTTPRequestOperation *afReqObject = (AFHTTPRequestOperation *)obj;
-                                                                           id responseObject = [afReqObject responseObject];
                                                                            
+                                                                           NSData *responseObject = (NSData *)[afReqObject responseObject];
+                                                                           NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:nil];
+                                                                           NSLog(@"responseObject[data]: %@", responseDict[@"data"]);
                                                                            
                                                                            NSLog(@"Operation: %@", [afReqObject responseString]);
                                                                            
-//                                                                           Message *msg = [[Message alloc] init];
-//                                                                           msg.mesRoute = MessageRouteMessageInternal;
-//                                                                           msg.ttl = TTL_NOW;
-//                                                                           msg.mesType = [[MessageDispatcher sharedInstance] messageNameTomessageType:@"OnHoldOrderMessage"];
-//                                                                           msg.params = [responseObject objectForKey:@"data"];
-//                                                                           [[MessageDispatcher sharedInstance] addMessageToBus:msg];
+                                                                           [responseList addObject:responseDict[@"data"]];
+
                                                                        }];
                                                                        
+                                                                       // Send Array of response dictionaries on message bus
+                                                                       if ([responseList count] > 0) {
+                                                                           Message *msg = [[Message alloc] init];
+                                                                           msg.mesRoute = MessageRouteMessageInternal;
+                                                                           msg.ttl = TTL_NOW;
+                                                                           msg.mesType = [[MessageDispatcher sharedInstance] messageNameTomessageType:@"OnHoldOrderMessage"];
+                                                                           msg.params = [responseList copy]; // make it immutable
+                                                                           [[MessageDispatcher sharedInstance] addMessageToBus:msg];
+                                                                       }
+
+                                                                       
+                                                                       
+
                                                                        
                                                                    }];
         
