@@ -70,6 +70,7 @@
 		<string>messageTypeComebackFromPortal</string>
 		<string>messageTypeAskToUpdateFirmware</string>
 		<string>messageTypeStartUpdatingFirmware</string>
+		<string>messageTypesearchForPeripherals</string>
 	</array>
 </dict>
 </plist>
