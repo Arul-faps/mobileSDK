@@ -10,8 +10,9 @@ import UIKit
 
 class PeripheralDiscoveryService: NSObject {
     
-    var printersList = [AnyObject]()
+    static let sharedInstance = PeripheralDiscoveryService()
     
+    var printersList = [AnyObject]()
     
     override init() {
         super.init()
@@ -24,7 +25,12 @@ class PeripheralDiscoveryService: NSObject {
         switch (msg.routingKey){
         case "internal.searchForPeripherals":
             let peripheralType = msg.params.objectForKey("peripheralType")
-            
+            if(peripheralType?.caseInsensitiveCompare(PRINTERS) == NSComparisonResult.OrderedSame){
+                self.searchForAllConnectedPrinters()
+            }
+            else if(peripheralType?.caseInsensitiveCompare(SCANNERS) == NSComparisonResult.OrderedSame){
+                self.searchForAllConnectedPrinters()
+            }
             break;
         default:
             break;
@@ -39,7 +45,7 @@ class PeripheralDiscoveryService: NSObject {
     }
     
     func searchForAllConnectedPrinters() {
-        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)){
             self.printersList = SMPort.searchPrinter()
             NSLog("Found printers %@", self.printersList)
             var savedPrinters:AnyObject = ["":""]

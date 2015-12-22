@@ -10,6 +10,9 @@
 #define TTL_NOW 0.1;
 #define CLEANUP_TIMER 10.0
 
+#define PRINTERS @"printers"
+#define SCANNERS @"scanners"
+
 
 @interface Message : NSObject
 
