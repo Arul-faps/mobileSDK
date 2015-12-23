@@ -71,11 +71,7 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
         }
     }
     else{
-        NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
-        [userInfo setObject:newmessage forKey:@"message"];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [NSTimer scheduledTimerWithTimeInterval:newmessage.ttl target:self selector:@selector(dispatchThisMessage:) userInfo:userInfo repeats:NO];
-        });
+        [self dispatchMessage:newmessage];
     }
 }
 
@@ -111,7 +107,8 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
 
 -(void)leave
 {
-    for(Message *msg in messageBus){
+    NSArray * goingAwayBus = [NSArray arrayWithArray:messageBus];
+    for(Message *msg in goingAwayBus){
         [self dispatchMessage:msg];
     }
 }
