@@ -17,6 +17,25 @@ class PeripheralDiscoveryService: NSObject {
     override init() {
         super.init()
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "consumeMessage:", name:"internal.searchForPeripherals", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "consumeMessage:", name:"internal.checkforavailabledevice", object: nil)
+    }
+    
+    func checkforavailabledevice(notif:NSNotification)
+    {
+        let msg = notif.userInfo!["message"] as! Message
+        switch (msg.routingKey){
+        case "internal.searchForPeripherals":
+            let peripheralType = msg.params.objectForKey("peripheralType")
+            if(peripheralType?.caseInsensitiveCompare(PRINTERS) == NSComparisonResult.OrderedSame){
+                self.searchForAllConnectedPrinters()
+            }
+            else if(peripheralType?.caseInsensitiveCompare(SCANNERS) == NSComparisonResult.OrderedSame){
+                self.searchForAllConnectedPrinters()
+            }
+            break;
+        default:
+            break;
+        }
     }
     
     func consumeMessage(notif:NSNotification)
@@ -30,6 +49,33 @@ class PeripheralDiscoveryService: NSObject {
             }
             else if(peripheralType?.caseInsensitiveCompare(SCANNERS) == NSComparisonResult.OrderedSame){
                 self.searchForAllConnectedPrinters()
+            }
+            break;
+        case "internal.checkforavailabledevice":
+            var isExistingReceiptPrinterAvailable: Bool = false
+            let peripheralType = msg.params.objectForKey("peripheralType") as! String
+            if(peripheralType.caseInsensitiveCompare(RECEIPT_PRINTERS) == NSComparisonResult.OrderedSame){
+                var printers: [NSObject : AnyObject] = NSUserDefaults.standardUserDefaults().objectForKey("printers") as! [NSObject : AnyObject]
+                let existingPrinters = printers[AppConfiguration.sharedConfig().midTidID] as! [AnyObject]
+                for oneprinter in existingPrinters {
+                    if (oneprinter.objectForKey("printer_type")?.caseInsensitiveCompare("receipt") == NSComparisonResult.OrderedSame) {
+                        isExistingReceiptPrinterAvailable = true
+                        break;
+                    }
+                }
+                
+                let msg:Message = Message()
+                if(isExistingReceiptPrinterAvailable == true){
+                    msg.routingKey = "internal.deviceisavailable"
+                }
+                else{
+                    msg.routingKey = "internal.deviceisnotavailable"
+                }
+                msg.params = ["peripheralType" : peripheralType]
+                MessageDispatcher.sharedInstance().addMessageToBus(msg)
+            }
+            else if(peripheralType.caseInsensitiveCompare(ITEMS_PRINTERS) == NSComparisonResult.OrderedSame){
+                
             }
             break;
         default:
