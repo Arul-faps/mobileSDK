@@ -18,24 +18,29 @@ class PeripheralDiscoveryService: NSObject {
         super.init()
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "consumeMessage:", name:"internal.searchForPeripherals", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "consumeMessage:", name:"internal.checkforavailabledevice", object: nil)
+        EAAccessoryManager.sharedAccessoryManager().registerForLocalNotifications()
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "externalAccessoryNotification:", name:EAAccessoryDidConnectNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "externalAccessoryNotification:", name:EAAccessoryDidDisconnectNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "externalAccessoryNotification:", name:EAAccessoryKey, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "externalAccessoryNotification:", name:EAAccessorySelectedKey, object: nil)
     }
     
-    func checkforavailabledevice(notif:NSNotification)
+    func externalAccessoryNotification(notif:NSNotification)
     {
-        let msg = notif.userInfo!["message"] as! Message
-        switch (msg.routingKey){
-        case "internal.searchForPeripherals":
-            let peripheralType = msg.params.objectForKey("peripheralType")
-            if(peripheralType?.caseInsensitiveCompare(PRINTERS) == NSComparisonResult.OrderedSame){
-                self.searchForAllConnectedPrinters()
-            }
-            else if(peripheralType?.caseInsensitiveCompare(SCANNERS) == NSComparisonResult.OrderedSame){
-                self.searchForAllConnectedPrinters()
-            }
+        switch(notif.name){
+        case EAAccessoryDidConnectNotification:
+            break
+        case EAAccessoryDidDisconnectNotification:
             break;
+        case EAAccessoryKey:
+            break
+        case EAAccessorySelectedKey:
+            break
         default:
-            break;
+            break
         }
+        let accessory:EAAccessory = notif.userInfo!["EAAccessoryKey"] as! EAAccessory
+        NSLog("Recevied %@ for %@",notif.name,accessory)
     }
     
     func consumeMessage(notif:NSNotification)
