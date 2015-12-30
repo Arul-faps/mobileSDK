@@ -52,10 +52,13 @@ class PeripheralDiscoveryService: NSObject {
             break;
         case "internal.checkforavailabledevice":
             var isExistingReceiptPrinterAvailable: Bool = false
+            
             let peripheralType = msg.params.objectForKey("peripheralType") as! String
             if(peripheralType.caseInsensitiveCompare(RECEIPT_PRINTERS) == NSComparisonResult.OrderedSame){
+                let manual: NSNumber = msg.params.objectForKey("ismanualprinting") as! NSNumber
                 var printers: [NSObject : AnyObject] = NSUserDefaults.standardUserDefaults().objectForKey("printers") as! [NSObject : AnyObject]
                 let existingPrinters = printers[AppConfiguration.sharedConfig().midTidID] as! [AnyObject]
+                NSLog("internal.checkforavailabledevice: ", existingPrinters);
                 for oneprinter in existingPrinters {
                     if (oneprinter.objectForKey("printer_type")?.caseInsensitiveCompare("receipt") == NSComparisonResult.OrderedSame) {
                         isExistingReceiptPrinterAvailable = true
@@ -64,13 +67,13 @@ class PeripheralDiscoveryService: NSObject {
                 }
                 
                 let msg:Message = Message()
-                if(isExistingReceiptPrinterAvailable == true){
+                if(isExistingReceiptPrinterAvailable == true || AppConfiguration.sharedConfig().powaTSeriesMgr.isPrinterReady() == true){
                     msg.routingKey = "internal.deviceisavailable"
                 }
                 else{
                     msg.routingKey = "internal.deviceisnotavailable"
                 }
-                msg.params = ["peripheralType" : peripheralType]
+                msg.params = ["peripheralType" : peripheralType,"ismanualprinting":manual]
                 MessageDispatcher.sharedInstance().addMessageToBus(msg)
             }
             else if(peripheralType.caseInsensitiveCompare(ITEMS_PRINTERS) == NSComparisonResult.OrderedSame){
