@@ -12,8 +12,8 @@
 
 #define PRINTERS @"printers"
 #define SCANNERS @"scanners"
-#define RECEIPT_PRINTERS @"RECEIPT_PRINTERS"
-#define ITEMS_PRINTERS   @"ITEMS_PRINTERS"
+#define RECEIPT_PRINTERS @"receipt"
+#define ITEMS_PRINTERS   @"items"
 
 @interface Message : NSObject
 
