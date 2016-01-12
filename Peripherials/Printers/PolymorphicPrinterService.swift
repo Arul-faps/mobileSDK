@@ -8,9 +8,16 @@
 
 import UIKit
 
-class PolymorphicPrinterService: NSObject {
 
+
+class PolymorphicPrinterService: NSObject {
+    
     func startService(){}
     
     func consumeMessage(notif:NSNotification){}
+    
+    func searchForAllConnectedPrinters(){}
+    
+    func printerDidConnect(notif:NSNotification){}
+    
 }

@@ -7,7 +7,11 @@
 #import "MessageDispatcher.h"
 #import <pos-Swift.h>
 #import "POS-Bridging-Header.h"
+<<<<<<< HEAD
 #import "CommManager.h"
+=======
+#import "RegexKitLite.h"
+>>>>>>> master
 
 @implementation MessageDispatcher
 
@@ -71,11 +75,7 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
         }
     }
     else{
-        NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
-        [userInfo setObject:newmessage forKey:@"message"];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [NSTimer scheduledTimerWithTimeInterval:newmessage.ttl target:self selector:@selector(dispatchThisMessage:) userInfo:userInfo repeats:NO];
-        });
+        [self dispatchMessage:newmessage];
     }
 }
 
@@ -111,12 +111,14 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
 
 -(void)leave
 {
-    for(Message *msg in messageBus){
+    NSArray * goingAwayBus = [NSArray arrayWithArray:messageBus];
+    for(Message *msg in goingAwayBus){
         [self dispatchMessage:msg];
     }
 }
 
 
+<<<<<<< HEAD
 -(messageType)messageNameTomessageType:(NSString*)messageName
 {
     if([messageName caseInsensitiveCompare:@"TokenForTransaction"] == NSOrderedSame){
@@ -190,23 +192,20 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
         case messageTypeComebackFromPortal:
             return @"messageTypeComebackFromPortal";
             break;
-        case messageTypeAskToUpdateFirmware:
-            return @"messageTypeAskToUpdateFirmware";
-            break;
-        case messageTypeStartUpdatingFirmware:
-            return @"messageTypeStartUpdatingFirmware";
-            break;
         default:
             break;
     }
     
     return retMessage;
 }
+=======
+>>>>>>> a48ee7ba9c2880518082747d8c1aacba9abdbe8e
 
 -(void)dispatchMessage:(Message*)message
 {
     NSMutableDictionary * messageDic = [[NSMutableDictionary alloc] init];
     
+<<<<<<< HEAD
 
     switch (message.mesRoute) {
         case MessageRouteMessageApiDelete:
@@ -245,6 +244,15 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
 //    [messageDic setObject:message forKey:@"message"];
 //    [[NSNotificationCenter defaultCenter] postNotificationName:[self messageTypeToString:message.mesType] object:nil userInfo:messageDic];
 //    [dispatchedMessages addObject:message];
+=======
+    if([[message routeFromRoutingKey] caseInsensitiveCompare:@"api"] == NSOrderedSame){
+        [MessageApiConverter.sharedInstance messageTypeToApiCall:message];
+    }
+    
+    [messageDic setObject:message forKey:@"message"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:message.routingKey object:nil userInfo:messageDic];
+    [dispatchedMessages addObject:message];
+>>>>>>> master
 }
 
 
@@ -256,6 +264,7 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
     
     NSString * sectoken = [[NSUserDefaults standardUserDefaults] objectForKey:@"securitytoken"];
     
+<<<<<<< HEAD
     switch (message.mesType) {
         case messageTypeMESSAGETYPE_GET_CONFIG:
             
@@ -276,6 +285,10 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
             
         default:
             break;
+=======
+    if(sectoken && sectoken.length > 0){
+        [message.params setObject:sectoken forKey:@"securitytoken"];
+>>>>>>> master
     }
 }
 
@@ -284,14 +297,6 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
 
 -(BOOL)canSendMessage:(Message*)message
 {
-    switch (message.mesType) {
-        case messageTypeMESSAGETYPE_GET_CONFIG:
-        case messageTypeTokenForTransactionRequest:
-        break;
-        default:
-            break;
-    }
-    
     return YES;
 }
 
