@@ -6,6 +6,7 @@
 
 #import <Foundation/Foundation.h>
 
+<<<<<<< HEAD
 typedef NS_ENUM(NSInteger, MessageRoute) {
     MessageRouteMessageInternal = 1,
     MessageRouteMessageApiGet = 2,
@@ -90,16 +91,25 @@ typedef enum {
     FLOATINGBUTTON_TYPE_BACK
 }FLOATINGBUTTONTYPE;
 
+=======
+>>>>>>> a48ee7ba9c2880518082747d8c1aacba9abdbe8e
 #define DEFAULT_TTL 5.0
 #define TTL_NOW 0.1;
 #define CLEANUP_TIMER 10.0
 
+#define PRINTERS @"printers"
+#define SCANNERS @"scanners"
+#define RECEIPT_PRINTERS @"receipt"
+#define ITEMS_PRINTERS   @"items"
 
 @interface Message : NSObject
 
-@property(nonatomic)MessageRoute mesRoute;
-@property(nonatomic)messageType mesType;
+@property(nonatomic,strong)NSString *routingKey;
+@property(nonatomic,strong)NSString *httpMethod;
 @property(nonatomic,strong)id params;
 @property(nonatomic)float ttl;
 @property(nonatomic,strong)NSString *messageApiEndPoint;
+
+-(NSString*)routeFromRoutingKey;
+-(NSString*)messageFromRoutingKey;
 @end

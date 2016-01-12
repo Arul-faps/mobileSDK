@@ -7,6 +7,7 @@
 #import "MessageDispatcher.h"
 #import <pos-Swift.h>
 #import "POS-Bridging-Header.h"
+#import "RegexKitLite.h"
 
 @implementation MessageDispatcher
 
@@ -70,11 +71,7 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
         }
     }
     else{
-        NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
-        [userInfo setObject:newmessage forKey:@"message"];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [NSTimer scheduledTimerWithTimeInterval:newmessage.ttl target:self selector:@selector(dispatchThisMessage:) userInfo:userInfo repeats:NO];
-        });
+        [self dispatchMessage:newmessage];
     }
 }
 
@@ -110,12 +107,14 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
 
 -(void)leave
 {
-    for(Message *msg in messageBus){
+    NSArray * goingAwayBus = [NSArray arrayWithArray:messageBus];
+    for(Message *msg in goingAwayBus){
         [self dispatchMessage:msg];
     }
 }
 
 
+<<<<<<< HEAD
 -(messageType)messageNameTomessageType:(NSString*)messageName
 {
     if([messageName caseInsensitiveCompare:@"TokenForTransaction"] == NSOrderedSame){
@@ -177,27 +176,19 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
     
     return retMessage;
 }
+=======
+>>>>>>> a48ee7ba9c2880518082747d8c1aacba9abdbe8e
 
 -(void)dispatchMessage:(Message*)message
 {
     NSMutableDictionary * messageDic = [[NSMutableDictionary alloc] init];
     
-
-    switch (message.mesRoute) {
-        case MessageRouteMessageApiDelete:
-        case MessageRouteMessageApiGet:
-        case MessageRouteMessageApiPost:
-        case MessageRouteMessageApiPut:
-            message.messageApiEndPoint = [MessageApiConverter.sharedInstance messageTypeToApiCall:message.mesType];
-
-            break;
-            
-        default:
-            break;
+    if([[message routeFromRoutingKey] caseInsensitiveCompare:@"api"] == NSOrderedSame){
+        [MessageApiConverter.sharedInstance messageTypeToApiCall:message];
     }
     
     [messageDic setObject:message forKey:@"message"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:[self messageTypeToString:message.mesType] object:nil userInfo:messageDic];
+    [[NSNotificationCenter defaultCenter] postNotificationName:message.routingKey object:nil userInfo:messageDic];
     [dispatchedMessages addObject:message];
 }
 
@@ -213,17 +204,6 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
     if(sectoken && sectoken.length > 0){
         [message.params setObject:sectoken forKey:@"securitytoken"];
     }
-    
-    switch (message.mesType) {
-        case messageTypeMESSAGETYPE_GET_CONFIG:
-            
-            break;
-        case messageTypeTokenForTransactionRequest:
-            //[[CommManager sharedInstance] postAPI:@"Transaction/GenerateTokenForTransaction" andParams:@{@"merchantKey":[Config sharedInstance].gateway_id ,@"processorId":[AppConfiguration sharedConfig].midTidID}.mutableCopy];
-            break;
-        default:
-            break;
-    }
 }
 
 
@@ -231,14 +211,6 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
 
 -(BOOL)canSendMessage:(Message*)message
 {
-    switch (message.mesType) {
-        case messageTypeMESSAGETYPE_GET_CONFIG:
-        case messageTypeTokenForTransactionRequest:
-        break;
-        default:
-            break;
-    }
-    
     return YES;
 }
 

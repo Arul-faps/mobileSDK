@@ -49,10 +49,7 @@ static CommManager *sharedSampleSingletonDelegate = nil;
 {
     if (self = [super init]) {
        self.imagesDownloadQueue = [[NSMutableDictionary alloc] init];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(consumeMessage:) name:[[MessageDispatcher sharedInstance] messageTypeToString:MessageRouteMessageApiDelete] object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(consumeMessage:) name:[[MessageDispatcher sharedInstance] messageTypeToString:MessageRouteMessageApiGet] object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(consumeMessage:) name:[[MessageDispatcher sharedInstance] messageTypeToString:MessageRouteMessageApiPost] object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(consumeMessage:) name:[[MessageDispatcher sharedInstance] messageTypeToString:MessageRouteMessageApiPut] object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(consumeMessage:) name:@"api.*" object:nil];
     }
     return self;
 }
@@ -62,19 +59,11 @@ static CommManager *sharedSampleSingletonDelegate = nil;
 {
     Message * msg = [notification.userInfo objectForKey:@"message"];
     
-    switch (msg.mesRoute) {
-        case MessageRouteMessageApiGet:
-        {
-            [self getAPI:msg.messageApiEndPoint andParams:msg.params];
-        }
-            break;
-        case MessageRouteMessageApiPost:
-        {
-            [self postAPI:msg.messageApiEndPoint andParams:msg.params];
-        }
-            break;
-        default:
-            break;
+    if([[msg httpMethod] caseInsensitiveCompare:@"get"]){
+        [self getAPI:msg.messageApiEndPoint andParams:msg.params];
+    }
+    else if([[msg httpMethod] caseInsensitiveCompare:@"post"]){
+        [self postAPI:msg.messageApiEndPoint andParams:msg.params];
     }
 }
 
@@ -88,8 +77,7 @@ static CommManager *sharedSampleSingletonDelegate = nil;
     [manager GET:fullAPI parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"JSON: %@", responseObject);
         Message *msg = [[Message alloc] init];
-        msg.mesRoute = MessageRouteMessageInternal;
-        msg.mesType = [[responseObject objectForKey:@"messageid"] intValue];
+        msg.routingKey = [NSString stringWithFormat:@"internal.%@",[responseObject objectForKey:@"action"]];
         msg.params = [responseObject objectForKey:@"data"];
         [[MessageDispatcher sharedInstance] addMessageToBus:msg];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -107,9 +95,7 @@ static CommManager *sharedSampleSingletonDelegate = nil;
     [manager POST:fullAPI parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"JSON: %@", responseObject);
         Message *msg = [[Message alloc] init];
-        msg.mesRoute = MessageRouteMessageInternal;
-        msg.ttl = TTL_NOW;
-        msg.mesType = [[MessageDispatcher sharedInstance] messageNameTomessageType:[responseObject objectForKey:@"action"]];
+        msg.routingKey = [NSString stringWithFormat:@"internal.%@",[responseObject objectForKey:@"action"]];
         msg.params = [responseObject objectForKey:@"data"];
         [[MessageDispatcher sharedInstance] addMessageToBus:msg];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

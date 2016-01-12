@@ -12,18 +12,18 @@ class MessageApiConverter:NSObject  {
     
     static let sharedInstance = MessageApiConverter()
 
-    func messageTypeToApiCall(Type:messageType) -> String {
-        var retApiCall: String = ""
-        
-        switch (Type) {
-        case .TokenForTransactionRequest:
-            retApiCall = "Transaction/GenerateTokenForTransaction"
+    func messageTypeToApiCall(msg:Message) {
+
+        switch (msg.messageFromRoutingKey()) {
+        case "messageTypeTokenForTransaction":
+            msg.messageApiEndPoint = "Transaction/GenerateTokenForTransaction"
+            msg.httpMethod = "get";
             break
         default:
             break
 
     }
-        return retApiCall
+        msg.routingKey = "api.*"
     }
     
     
