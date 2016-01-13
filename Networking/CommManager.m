@@ -59,10 +59,10 @@ static CommManager *sharedSampleSingletonDelegate = nil;
 {
     Message * msg = [notification.userInfo objectForKey:@"message"];
     
-    if([[msg httpMethod] caseInsensitiveCompare:@"get"]){
+    if([[msg httpMethod] caseInsensitiveCompare:@"get"] == NSOrderedSame){
         [self getAPI:msg.messageApiEndPoint andParams:msg.params];
     }
-    else if([[msg httpMethod] caseInsensitiveCompare:@"post"]){
+    else if([[msg httpMethod] caseInsensitiveCompare:@"post"] == NSOrderedSame){
         [self postAPI:msg.messageApiEndPoint andParams:msg.params];
     }
 }

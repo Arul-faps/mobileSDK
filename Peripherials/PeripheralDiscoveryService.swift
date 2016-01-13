@@ -8,14 +8,10 @@
 
 import UIKit
 
-class PeripheralDiscoveryService: NSObject {
+class PeripheralDiscoveryService: PeripheralDiscoveryPolymorphic {
     
     static let sharedInstance = PeripheralDiscoveryService()
-    
-    var connectedAccessories = [AnyObject]()
-    
-    var entitledHardware: NSDictionary?
-    
+
     override init() {
         super.init()
         
@@ -56,6 +52,7 @@ class PeripheralDiscoveryService: NSObject {
         if(slipType.caseInsensitiveCompare(RECEIPT_PRINTERS) == NSComparisonResult.OrderedSame && AppConfiguration.sharedConfig().powaTSeriesMgr.isPrinterReady() == true){
             return true
         }
+        
         var query: String = "SELECT * FROM network_printers where assigned_db_id != 0"
         let index:Int32 = DBManager.sharedInstance().loadDataFromDB(query)
         while DBManager.sharedInstance().hasDataForIndex(index) {
@@ -75,7 +72,7 @@ class PeripheralDiscoveryService: NSObject {
         return false
     }
     
-    func consumeMessage(notif:NSNotification)
+    override func consumeMessage(notif:NSNotification)
     {
         let msg = notif.userInfo!["message"] as! Message
         switch (msg.routingKey){
@@ -87,12 +84,14 @@ class PeripheralDiscoveryService: NSObject {
             let peripheralType = msg.params.objectForKey("peripheralType") as! String
             let manual: NSNumber = msg.params.objectForKey("ismanualprinting") as! NSNumber
             let isExistingReceiptPrinterAvailable: Bool = self.findAssignedPrintersForSlipType(peripheralType)
-
+            Utils.sharedInstance().outputToTerminalFrame(CGRectMake(0,0,300,300), logline: "internal.checkforavailabledevice", progress: 0)
             let msg:Message = Message()
             if(isExistingReceiptPrinterAvailable == true || AppConfiguration.sharedConfig().powaTSeriesMgr.isPrinterReady() == true){
+                Utils.sharedInstance().outputToTerminalFrame(CGRectMake(0,0,300,300), logline: "internal.deviceisavailable", progress: 0)
                 msg.routingKey = "internal.deviceisavailable"
             }
             else{
+                Utils.sharedInstance().outputToTerminalFrame(CGRectMake(0,0,300,300), logline: "internal.deviceisnotavailable", progress: 0)
                 msg.routingKey = "internal.deviceisnotavailable"
             }
             msg.params = ["peripheralType" : peripheralType,"ismanualprinting":manual]
