@@ -7,11 +7,7 @@
 #import "MessageDispatcher.h"
 #import <pos-Swift.h>
 #import "POS-Bridging-Header.h"
-<<<<<<< HEAD
-#import "CommManager.h"
-=======
 #import "RegexKitLite.h"
->>>>>>> master
 
 @implementation MessageDispatcher
 
@@ -58,16 +54,16 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
         }
         
         
-             [NSTimer scheduledTimerWithTimeInterval:CLEANUP_TIMER target:self selector:@selector(clearDispastchedMessages) userInfo:nil repeats:YES];
+        [NSTimer scheduledTimerWithTimeInterval:CLEANUP_TIMER target:self selector:@selector(clearDispastchedMessages) userInfo:nil repeats:YES];
         
-       
+        
     }
     return self;
 }
 
 -(void)addMessageToBus:(Message*)newmessage
 {
-
+    
     if(newmessage.ttl == DEFAULT_TTL){
         [messageBus addObject:newmessage];
         if(dispsatchTimer == nil){
@@ -118,141 +114,21 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
 }
 
 
-<<<<<<< HEAD
--(messageType)messageNameTomessageType:(NSString*)messageName
-{
-    if([messageName caseInsensitiveCompare:@"TokenForTransaction"] == NSOrderedSame){
-        return messageTypeTokenForTransaction;
-    }
-    else if([messageName caseInsensitiveCompare:@"IngenicoMessage"] == NSOrderedSame){
-        return messageTypeIngenicoMessage;
-    }
-    else if([messageName caseInsensitiveCompare:@"OnHoldOrderMessage"] == NSOrderedSame){
-        return messageTypeOnHoldOrdersSyncBatch;
-    }
-    
-    return -1;
-}
-
--(NSString*)messageTypeToString:(messageType)Type
-{
-    NSString *retMessage = @"";
-    switch (Type) {
-        case messageTypeMESSAGETYPE_GET_CONFIG:
-            retMessage = @"MESSAGETYPE_GET_CONFIG";
-            break;
-        case messageTypeTokenForTransactionRequest:
-            retMessage = @"TokenForTransactionRequest";
-            break;
-        case messageTypeTokenForTransaction:
-            retMessage = @"TokenForTransaction";
-            break;
-        case messageTypeIngenicoMessage:
-            retMessage = @"IngenicoMessage";
-            break;
-        case messageTypeUserInitializeHardware:
-            return @"messageTypeUserInitializeHardware";
-            break;
-        case messageTypeStartScanners:
-            return @"messageTypeStartScanners";
-            break;
-        case messageTypeStopScanners:
-            return @"messageTypeStopScanners";
-            break;
-        case messageTypeProductScanned:
-            return @"messageTypeProductScanned";
-            break;
-            // ---------------------
-            // ON HOLD ORDERS
-            // ---------------------
-        case messageTypeOnHoldOrdersSyncBatch:
-            return @"messageTypeOnHoldOrdersSyncBatch";
-            break;
-        case messageTypeOnHoldOrdersSyncSingle:
-            return @"messageTypeOnHoldOrdersSyncSingle";
-            break;
-            // ---------------------
-            // ON HOLD ORDERS ACTIONS
-            // ---------------------
-        case messageTypeOnHoldOrdersActionPost:
-            return @"messageTypeOnHoldOrdersActionPost";
-            break;
-        case messageTypeOnHoldOrdersActionDelete:
-            return @"messageTypeOnHoldOrdersActionDelete";
-            break;
-        case messageTypeOnHoldOrdersActionGet:
-            return @"messageTypeOnHoldOrdersActionGet";
-            break;
-            // ---------------------
-            // PORTAL
-            // ---------------------
-        case messageTypeGotoPortal:
-            return @"messageTypeGotoPortal";
-            break;
-        case messageTypeComebackFromPortal:
-            return @"messageTypeComebackFromPortal";
-            break;
-        default:
-            break;
-    }
-    
-    return retMessage;
-}
-=======
->>>>>>> a48ee7ba9c2880518082747d8c1aacba9abdbe8e
 
 -(void)dispatchMessage:(Message*)message
 {
     NSMutableDictionary * messageDic = [[NSMutableDictionary alloc] init];
     
-<<<<<<< HEAD
-
-    switch (message.mesRoute) {
-        case MessageRouteMessageApiDelete:
-        case MessageRouteMessageApiGet:
-        case MessageRouteMessageApiPost:
-        case MessageRouteMessageApiPut:
-            message.messageApiEndPoint = [MessageApiConverter.sharedInstance messageTypeToApiCall:message.mesType];
-
-            break;
-        case MessageRouteMessageApiBatchPost:
-        case MessageRouteMessageApiBatchGet:
-            message.messageApiEndPoint = @"https://secure-qa.goemerchant.com/secure/mobilepos/v99/ios/mobilepos.ashx";
-            
-            break;
-        default:
-            break;
-    }
-    
-    switch (message.mesRoute) {
-        case MessageRouteMessageApiBatchPost:
-        case MessageRouteMessageApiBatchGet:
-            [self routeMessageToServerWithType:message];
-     
-            break;
-        default:
-            
-            [messageDic setObject:message forKey:@"message"];
-            [[NSNotificationCenter defaultCenter] postNotificationName:[self messageTypeToString:message.mesType] object:nil userInfo:messageDic];
-            [dispatchedMessages addObject:message];
-            break;
-    }
-    
-    // GOS: Temporarily commented  out below in order handle internal routing of a batch request for On Hold Order message type.
-    // It appears that message type below would prevent it from posting a batch request to the Comm Manager
-    
-//    [messageDic setObject:message forKey:@"message"];
-//    [[NSNotificationCenter defaultCenter] postNotificationName:[self messageTypeToString:message.mesType] object:nil userInfo:messageDic];
-//    [dispatchedMessages addObject:message];
-=======
     if([[message routeFromRoutingKey] caseInsensitiveCompare:@"api"] == NSOrderedSame){
         [MessageApiConverter.sharedInstance messageTypeToApiCall:message];
     }
     
     [messageDic setObject:message forKey:@"message"];
+    NSLog(@"message.routingKey: %@", message.routingKey);
+    NSLog(@"message.httpMethod: %@", message.httpMethod);
+    NSLog(@"message.params: %@", message.params);
     [[NSNotificationCenter defaultCenter] postNotificationName:message.routingKey object:nil userInfo:messageDic];
     [dispatchedMessages addObject:message];
->>>>>>> master
 }
 
 
@@ -264,31 +140,8 @@ static MessageDispatcher *sharedDispatcherInstance = nil;
     
     NSString * sectoken = [[NSUserDefaults standardUserDefaults] objectForKey:@"securitytoken"];
     
-<<<<<<< HEAD
-    switch (message.mesType) {
-        case messageTypeMESSAGETYPE_GET_CONFIG:
-            
-            break;
-        case messageTypeTokenForTransactionRequest:
-            
-
-            
-            if(sectoken && sectoken.length > 0){
-                [message.params setObject:sectoken forKey:@"securitytoken"];
-            }
-            //[[CommManager sharedInstance] postAPI:@"Transaction/GenerateTokenForTransaction" andParams:@{@"merchantKey":[Config sharedInstance].gateway_id ,@"processorId":[AppConfiguration sharedConfig].midTidID}.mutableCopy];
-            break;
-        
-        case messageTypeOnHoldOrdersSyncBatch:
-            [[CommManager sharedInstance] batchPostAPI:message.messageApiEndPoint andParams:message.params];
-            break;
-            
-        default:
-            break;
-=======
     if(sectoken && sectoken.length > 0){
         [message.params setObject:sectoken forKey:@"securitytoken"];
->>>>>>> master
     }
 }
 

@@ -60,32 +60,17 @@ static CommManager *sharedSampleSingletonDelegate = nil;
 {
     Message * msg = [notification.userInfo objectForKey:@"message"];
     
-<<<<<<< HEAD
-    switch (msg.mesRoute) {
-        case MessageRouteMessageApiGet:
-        {
-            [self getAPI:msg.messageApiEndPoint andParams:msg.params];
-        }
-            break;
-        case MessageRouteMessageApiPost:
-        {
-            [self postAPI:msg.messageApiEndPoint andParams:msg.params];
-        }
-            break;
-        case MessageRouteMessageApiBatchPost:
-        {
-            [self batchPostAPI:msg.messageApiEndPoint andParams:msg.params];
-        }
-            break;
-        default:
-            break;
-=======
-    if([[msg httpMethod] caseInsensitiveCompare:@"get"]){
+    NSLog(@"msg httpMethod:%@", [msg httpMethod]);
+    NSLog(@"msg routingKey:%@", [msg routingKey]);
+    
+    if([[msg httpMethod] caseInsensitiveCompare:@"get"] == NSOrderedSame){
         [self getAPI:msg.messageApiEndPoint andParams:msg.params];
     }
-    else if([[msg httpMethod] caseInsensitiveCompare:@"post"]){
+    else if([[msg httpMethod] caseInsensitiveCompare:@"post"] == NSOrderedSame){
         [self postAPI:msg.messageApiEndPoint andParams:msg.params];
->>>>>>> master
+    }
+    else if([[msg httpMethod] caseInsensitiveCompare:@"postBatch"] == NSOrderedSame){
+        [self batchPostAPI:msg.messageApiEndPoint andParams:msg.params];
     }
 }
 
@@ -168,9 +153,8 @@ static CommManager *sharedSampleSingletonDelegate = nil;
                                                                        // Send Array of response dictionaries on message bus
                                                                        if ([responseList count] > 0) {
                                                                            Message *msg = [[Message alloc] init];
-                                                                           msg.mesRoute = MessageRouteMessageInternal;
+                                                                           msg.routingKey = @"internal.onholdorderssyncbatch";
                                                                            msg.ttl = TTL_NOW;
-                                                                           msg.mesType = [[MessageDispatcher sharedInstance] messageNameTomessageType:@"OnHoldOrderMessage"];
                                                                            msg.params = [responseList copy]; // make it immutable
                                                                            [[MessageDispatcher sharedInstance] addMessageToBus:msg];
                                                                        }

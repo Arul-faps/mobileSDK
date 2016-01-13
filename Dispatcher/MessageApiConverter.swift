@@ -19,10 +19,15 @@ class MessageApiConverter:NSObject  {
             msg.messageApiEndPoint = "Transaction/GenerateTokenForTransaction"
             msg.httpMethod = "get";
             break
+        case "messageTypeOnHoldOrdersBatch":
+            msg.messageApiEndPoint = "https://secure.1stpaygateway.net/secure/mobilepos/v99/ios/mobilepos.ashx"
+            msg.httpMethod = "postBatch";
+            break
         default:
             break
 
-    }
+        }
+        
         msg.routingKey = "api.*"
     }
     

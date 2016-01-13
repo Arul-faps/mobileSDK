@@ -13,16 +13,11 @@
 /*!	@function	+dataWithBase64EncodedString:
 	@discussion	This method returns an autoreleased NSData object. The NSData object is initialized with the
  contents of the Base 64 encoded string. This is a convenience method.
-<<<<<<< HEAD
  @param	inBase64String	An NSString object that contains only Base 64 encoded data.
  @result	The NSData object. */
 + (NSData*)dataWithBase64EncodedString:(NSString *)string NS_SWIFT_NAME(data(base64EncodedString:));
 //+ (NSData*)dataWithBase64EncodedString:(NSString *)string;
-=======
-	@param	inBase64String	An NSString object that contains only Base 64 encoded data.
-	@result	The NSData object. */
-+ (NSData *) dataWithBase64EncodedString:(NSString *) string;
->>>>>>> a48ee7ba9c2880518082747d8c1aacba9abdbe8e
+
 
 /*!	@function	-initWithBase64EncodedString:
 	@discussion	The NSData object is initialized with the contents of the Base 64 encoded string.
