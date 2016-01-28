@@ -5,7 +5,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "Message.h"
 #import <UIKit/UIKit.h>
 @interface MessageDispatcher : NSObject
 {

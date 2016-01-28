@@ -108,13 +108,12 @@ class PolymorphicScannerService: NSObject {
             }
             
             NSLog("Dispatching scanned product message %@", scannedUPC)
-            let msg:Message = Message()
-            msg.routingKey = "internal.messageTypeProductScanned"
+            let msg:Message = Message(routKey: "internal.messageTypeProductScanned")
             //msg.ttl = DEFAULT_TTL
             msg.params = [
                 "productUPC" : scannedUPC
             ]
-            MessageDispatcher.sharedInstance().addMessageToBus(msg)
+            MessageDispatcher.sharedDispacherInstance.addMessageToBus(msg)
         }
     }
     

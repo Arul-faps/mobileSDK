@@ -8,18 +8,14 @@
 
 import UIKit
 
-class PeripheralDiscoveryService: PeripheralDiscoveryPolymorphic {
+class PeripheralDiscoveryService: NSObject {
     
     static let sharedInstance = PeripheralDiscoveryService()
-
+    
+    var connectedAccessories = [AnyObject]()
+    
     override init() {
         super.init()
-        
-        if let path = NSBundle.mainBundle().pathForResource("HardwareEntitlements", ofType: "plist") {
-            entitledHardware = NSDictionary(contentsOfFile: path)
-            NSLog("%@", entitledHardware!)
-        }
-        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "consumeMessage:", name:"internal.searchForPeripherals", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "consumeMessage:", name:"internal.checkforavailabledevice", object: nil)
         EAAccessoryManager.sharedAccessoryManager().registerForLocalNotifications()
@@ -44,35 +40,10 @@ class PeripheralDiscoveryService: PeripheralDiscoveryPolymorphic {
             break
         }
         let accessory:EAAccessory = notif.userInfo!["EAAccessoryKey"] as! EAAccessory
-        NSLog("Recevied %@ for %@",notif.name,accessory)
+        NSLog("Recevied %@ for %@",notif.name,accessory.description)
     }
     
-    func findAssignedPrintersForSlipType(slipType:String) -> Bool
-    {
-        if(slipType.caseInsensitiveCompare(RECEIPT_PRINTERS) == NSComparisonResult.OrderedSame && AppConfiguration.sharedConfig().powaTSeriesMgr.isPrinterReady() == true){
-            return true
-        }
-        
-        var query: String = "SELECT * FROM network_printers where assigned_db_id != 0"
-        let index:Int32 = DBManager.sharedInstance().loadDataFromDB(query)
-        while DBManager.sharedInstance().hasDataForIndex(index) {
-            let row: [NSObject : AnyObject] = DBManager.sharedInstance().nextForIndex(index) as [NSObject : AnyObject]
-            let assigned_db_id  = (row["assigned_db_id"] as! NSString)
-            query = "SELECT * FROM printers WHERE id = \(assigned_db_id)"
-            let insideindex:Int32 = DBManager.sharedInstance().loadDataFromDB(query)
-            while DBManager.sharedInstance().hasDataForIndex(insideindex) {
-                var row: [NSObject : AnyObject] = DBManager.sharedInstance().nextForIndex(insideindex) as [NSObject : AnyObject]
-                let printer_type = (row["printer_type"] as! String)
-                if(printer_type.caseInsensitiveCompare(slipType) == NSComparisonResult.OrderedSame){
-                    return true
-                }
-            }
-        }
-        
-        return false
-    }
-    
-    override func consumeMessage(notif:NSNotification)
+    func consumeMessage(notif:NSNotification)
     {
         let msg = notif.userInfo!["message"] as! Message
         switch (msg.routingKey){
@@ -80,26 +51,39 @@ class PeripheralDiscoveryService: PeripheralDiscoveryPolymorphic {
             self.searchForConnectedAccessories()
             break;
         case "internal.checkforavailabledevice":
+            var isExistingReceiptPrinterAvailable: Bool = false
             
-            let peripheralType = msg.params.objectForKey("peripheralType") as! String
-            let manual: NSNumber = msg.params.objectForKey("ismanualprinting") as! NSNumber
-            let isExistingReceiptPrinterAvailable: Bool = self.findAssignedPrintersForSlipType(peripheralType)
-            Utils.sharedInstance().outputToTerminalFrame(CGRectMake(0,0,300,300), logline: "internal.checkforavailabledevice", progress: 0)
-            let msg:Message = Message()
-            if(isExistingReceiptPrinterAvailable == true || AppConfiguration.sharedConfig().powaTSeriesMgr.isPrinterReady() == true){
-                Utils.sharedInstance().outputToTerminalFrame(CGRectMake(0,0,300,300), logline: "internal.deviceisavailable", progress: 0)
-                msg.routingKey = "internal.deviceisavailable"
+            let peripheralType = msg.params!.objectForKey("peripheralType") as! String
+            if(peripheralType.caseInsensitiveCompare(RECEIPT_PRINTERS) == NSComparisonResult.OrderedSame){
+                let manual: NSNumber = msg.params!.objectForKey("ismanualprinting") as! NSNumber
+                var printers: [NSObject : AnyObject] = NSUserDefaults.standardUserDefaults().objectForKey("printers") as! [NSObject : AnyObject]
+                let existingPrinters = printers[AppConfiguration.sharedConfig().midTidID] as! [AnyObject]
+                NSLog("internal.checkforavailabledevice: ", existingPrinters);
+                for oneprinter in existingPrinters {
+                    if (oneprinter.objectForKey("printer_type")?.caseInsensitiveCompare("receipt") == NSComparisonResult.OrderedSame) {
+                        isExistingReceiptPrinterAvailable = true
+                        break;
+                    }
+                }
+                
+                let msg:Message
+                if(isExistingReceiptPrinterAvailable == true || AppConfiguration.sharedConfig().powaTSeriesMgr.isPrinterReady() == true){
+                    msg = Message(routKey: "internal.deviceisavailable")
+                }
+                else{
+                    msg = Message(routKey: "internal.deviceisnotavailable")
+                }
+                msg.params = ["peripheralType" : peripheralType,"ismanualprinting":manual]
+                MessageDispatcher.sharedDispacherInstance.addMessageToBus(msg)
             }
-            else{
-                Utils.sharedInstance().outputToTerminalFrame(CGRectMake(0,0,300,300), logline: "internal.deviceisnotavailable", progress: 0)
-                msg.routingKey = "internal.deviceisnotavailable"
+            else if(peripheralType.caseInsensitiveCompare(ITEMS_PRINTERS) == NSComparisonResult.OrderedSame){
+                
             }
-            msg.params = ["peripheralType" : peripheralType,"ismanualprinting":manual]
-            MessageDispatcher.sharedInstance().addMessageToBus(msg)
             break;
         default:
             break;
         }
+        msg.selfDestruct()
     }
     
     

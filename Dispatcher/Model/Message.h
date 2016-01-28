@@ -6,14 +6,6 @@
 
 #import <Foundation/Foundation.h>
 
-#define DEFAULT_TTL 5.0
-#define TTL_NOW 0.1;
-#define CLEANUP_TIMER 10.0
-
-#define PRINTERS @"printers"
-#define SCANNERS @"scanners"
-#define RECEIPT_PRINTERS @"receipt"
-#define ITEMS_PRINTERS   @"items"
 
 @interface Message : NSObject
 

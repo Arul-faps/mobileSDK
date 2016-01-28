@@ -7,7 +7,7 @@
 #import "CommManager.h"
 #import "StringHelper.h"
 #import "AppDelegate.h"
-#import "MessageDispatcher.h"
+
 
 @implementation CommManager
 
@@ -65,6 +65,7 @@ static CommManager *sharedSampleSingletonDelegate = nil;
     else if([[msg httpMethod] caseInsensitiveCompare:@"post"] == NSOrderedSame){
         [self postAPI:msg.messageApiEndPoint andParams:msg.params];
     }
+    [msg selfDestruct];
 }
 
 -(void)getAPI:(NSString*)api andParams:(NSMutableDictionary*)params{
@@ -76,10 +77,9 @@ static CommManager *sharedSampleSingletonDelegate = nil;
     
     [manager GET:fullAPI parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"JSON: %@", responseObject);
-        Message *msg = [[Message alloc] init];
-        msg.routingKey = [NSString stringWithFormat:@"internal.%@",[responseObject objectForKey:@"action"]];
+        Message *msg = [[Message alloc] initWithRoutKey:[NSString stringWithFormat:@"internal.%@",[responseObject objectForKey:@"action"]]];
         msg.params = [responseObject objectForKey:@"data"];
-        [[MessageDispatcher sharedInstance] addMessageToBus:msg];
+        [[MessageDispatcher sharedDispacherInstance] addMessageToBus:msg];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
     }];
@@ -94,10 +94,9 @@ static CommManager *sharedSampleSingletonDelegate = nil;
     
     [manager POST:fullAPI parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"JSON: %@", responseObject);
-        Message *msg = [[Message alloc] init];
-        msg.routingKey = [NSString stringWithFormat:@"internal.%@",[responseObject objectForKey:@"action"]];
+        Message *msg = [[Message alloc] initWithRoutKey:[NSString stringWithFormat:@"internal.%@",[responseObject objectForKey:@"action"]]];
         msg.params = [responseObject objectForKey:@"data"];
-        [[MessageDispatcher sharedInstance] addMessageToBus:msg];
+        [[MessageDispatcher sharedDispacherInstance] addMessageToBus:msg];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
     }];
