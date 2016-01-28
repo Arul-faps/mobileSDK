@@ -67,7 +67,7 @@ class MessageDispatcher:NSObject {
     
     func startDispatching() {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "consumeMessage:", name: "msg.selfdestruct", object: nil)
-        dispsatchTimer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: "leave", userInfo: nil, repeats: true)
+        dispsatchTimer = NSTimer.scheduledTimerWithTimeInterval(0.3, target: self, selector: "leave", userInfo: nil, repeats: true)
         NSLog("SetTimer %@", dispsatchTimer!)
     }
     
