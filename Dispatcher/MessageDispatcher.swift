@@ -35,8 +35,7 @@ class MessageDispatcher:NSObject {
     func addMessageToBus(newmessage: Message) {
         if(newmessage.routingKey.caseInsensitiveCompare("msg.selfdestruct") == NSComparisonResult.OrderedSame)
         {
-            let msgToDestruct:Message = newmessage.params!["message"] as! Message
-            let index:Int = messageBus.indexOf(msgToDestruct)!
+            let index:Int = messageBus.indexOf(newmessage)!
             if(index >= 0 ){
                 messageBus.removeAtIndex(index)
             }
@@ -67,8 +66,7 @@ class MessageDispatcher:NSObject {
     
     func startDispatching() {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "consumeMessage:", name: "msg.selfdestruct", object: nil)
-        dispsatchTimer = NSTimer.scheduledTimerWithTimeInterval(0.3, target: self, selector: "leave", userInfo: nil, repeats: true)
-        NSLog("SetTimer %@", dispsatchTimer!)
+        dispsatchTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "leave", userInfo: nil, repeats: true)
     }
     
     func stopDispathing() {
@@ -92,7 +90,7 @@ class MessageDispatcher:NSObject {
         }
         messageDic["message"] = message
         NSNotificationCenter.defaultCenter().postNotificationName(message.routingKey, object: nil, userInfo: messageDic)
-        dispatchedMessages.append(message)
+        //dispatchedMessages.append(message)
     }
     
     func routeMessageToServerWithType(message: Message) {

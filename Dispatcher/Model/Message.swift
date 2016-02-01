@@ -38,8 +38,9 @@ class Message:NSObject {
     
     func selfDestruct()
     {
-        let msg:Message = Message(routKey: "msg.selfdestruct")
-        msg.params = ["message":self]
-        MessageDispatcher.sharedDispacherInstance.addMessageToBus(msg)
+        routingKey = "msg.selfdestruct"
+        //let msg:Message = Message(routKey: "msg.selfdestruct")
+        //msg.params = ["message":self]
+        MessageDispatcher.sharedDispacherInstance.addMessageToBus(self)
     }
 }
