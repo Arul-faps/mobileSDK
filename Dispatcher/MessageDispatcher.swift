@@ -90,7 +90,6 @@ class MessageDispatcher:NSObject {
         }
         messageDic["message"] = message
         NSNotificationCenter.defaultCenter().postNotificationName(message.routingKey, object: nil, userInfo: messageDic)
-        //dispatchedMessages.append(message)
     }
     
     func routeMessageToServerWithType(message: Message) {
