@@ -64,6 +64,7 @@ extension DbLocalError: CustomStringConvertible {
         case ErrorOnUpdate: return "Error on UPDATE"
         case ErrorOnDelete: return "Error on DELETE"
         case ErrorUnKnown: return "Unknown Error"
+        default: return "Hello"
         }
     }
 }
