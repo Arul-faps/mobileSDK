@@ -54,7 +54,7 @@ class PeripheralDiscoveryService: NSObject {
             var isExistingReceiptPrinterAvailable: Bool = false
             
             let peripheralType = msg.params!.objectForKey("peripheralType") as! String
-            if(peripheralType.caseInsensitiveCompare(RECEIPT_PRINTERS) == NSComparisonResult.OrderedSame){
+            if(peripheralType.caseInsensitiveCompare(RECEIPT_PRINTERS) == NSComparisonResult.OrderedSame) {
                 let manual: NSNumber = msg.params!.objectForKey("ismanualprinting") as! NSNumber
                 var printers: [NSObject : AnyObject] = NSUserDefaults.standardUserDefaults().objectForKey("printers") as! [NSObject : AnyObject]
                 let existingPrinters = printers[AppConfiguration.sharedConfig().midTidID] as! [AnyObject]

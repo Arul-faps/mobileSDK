@@ -33,9 +33,38 @@ extension String {
         return nil
     }
     
+    func urlEncodedString() -> String? {
+        let customAllowedSet =  NSCharacterSet.URLQueryAllowedCharacterSet()
+        let escapedString = self.stringByAddingPercentEncodingWithAllowedCharacters(customAllowedSet)
+        return escapedString
+    }
+
+    
     func validateEmail(email:String) -> Bool{
         let emailRegex:String = String("[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}")
         let emailTest: NSPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
         return emailTest.evaluateWithObject(email)
     }
+    
 }
+
+extension Dictionary {
+    mutating func merge<K, V>(dict: [K: V]){
+        for (k, v) in dict {
+            self.updateValue(v as! Value, forKey: k as! Key)
+        }
+    }
+}
+
+extension DbLocalError: CustomStringConvertible {
+    var description: String {
+        switch self {
+        case ErrorNone: return "NoError"
+        case ErrorOnInsert: return "Error on INSERT"
+        case ErrorOnUpdate: return "Error on UPDATE"
+        case ErrorOnDelete: return "Error on DELETE"
+        case ErrorUnKnown: return "Unknown Error"
+        }
+    }
+}
+
