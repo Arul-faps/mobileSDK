@@ -27,14 +27,50 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '8.0'
   s.requires_arc = true
 
-  #Networking - AFNetworking
+  //---------------------------------------------
+  // Networking - AFNetworking
+  //---------------------------------------------
   s.subspec 'Networking' do |net|
-    net.preserve_paths = 'Networking/AFNetworking/*.{h,m}', 'Networking/UIKit+AFNetworking/*.{h,m}', 'Networking/*.{h,m}'
+    #net.preserve_paths = 'Networking/AFNetworking/*.{h,m}', 'Networking/UIKit+AFNetworking/*.{h,m}', 'Networking/*.{h,m}'
     net.source_files   = 'Networking/AFNetworking/*.{h,m}', 'Networking/UIKit+AFNetworking/*.{h,m}', 'Networking/*.{h,m}'
   end
 
+  //---------------------------------------------
+  // Dispatcher
+  //---------------------------------------------
   s.subspec 'Dispatcher' do |dispatcher|
     dispatcher.source_files   = 'Dispatcher/Model/*.{h,m}', 'Dispatcher/*.{h,m}'
   end
+
+
+  //---------------------------------------------
+  // Crypto
+  //---------------------------------------------
+   s.subspec 'Crypto' do |crypto|
+    crypto.source_files   = 'Crypto/GTM/*.{h,m}', 'Crypto/*.{h,m}'
+  end
+
+  //---------------------------------------------
+  // Extensions
+  //---------------------------------------------
+  s.subspec 'Extensions' do |extensions|
+    extensions.source_files   = 'Extensions/*.{h,m}'
+  end
+
+  //---------------------------------------------
+  // Helpers
+  //---------------------------------------------
+  s.subspec 'Helpers' do |helpers|
+    helpers.source_files   = 'Helpers/*.{h,m}'
+  end
+
+  //---------------------------------------------
+  // Peripherials
+  //---------------------------------------------
+  s.subspec 'Peripherials' do |peripherials|
+    peripherials.source_files   = 'Peripherials/Printers/*.{h,m}', 'Peripherials/Scanners/*.{h,m}', 'Peripherials/Swipers/*.{h,m}', 'Peripherials/*.{h,m}'
+  end
+  
+
 
 end
