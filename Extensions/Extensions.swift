@@ -56,16 +56,16 @@ extension Dictionary {
     }
 }
 
-extension DbLocalError: CustomStringConvertible {
-    var description: String {
-        switch self {
-        case ErrorNone: return "NoError"
-        case ErrorOnInsert: return "Error on INSERT"
-        case ErrorOnUpdate: return "Error on UPDATE"
-        case ErrorOnDelete: return "Error on DELETE"
-        case ErrorUnKnown: return "Unknown Error"
-        default: return "Hello"
-        }
-    }
-}
+//extension DbLocalError: CustomStringConvertible {
+//    var description: String {
+//        switch self {
+//        case ErrorNone: return "NoError"
+//        case ErrorOnInsert: return "Error on INSERT"
+//        case ErrorOnUpdate: return "Error on UPDATE"
+//        case ErrorOnDelete: return "Error on DELETE"
+//        case ErrorUnKnown: return "Unknown Error"
+//        default: return "Hello"
+//        }
+//    }
+//}
 
