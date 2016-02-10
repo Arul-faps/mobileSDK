@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import mobilesdkfw
 
 class PeripheralDiscoveryService: NSObject {
     
