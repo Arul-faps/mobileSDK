@@ -13,6 +13,7 @@ class Message:NSObject {
     var httpMethod:String = String("")
     var params:AnyObject?
     var ttl:Float = 0.1
+    var shouldselfdestruct:Bool = false
     var messageApiEndPoint:String = String("")
     
     init(routKey:String) {
@@ -39,8 +40,6 @@ class Message:NSObject {
     func selfDestruct()
     {
         routingKey = "msg.selfdestruct"
-        //let msg:Message = Message(routKey: "msg.selfdestruct")
-        //msg.params = ["message":self]
         MessageDispatcher.sharedDispacherInstance.addMessageToBus(self)
     }
 }
