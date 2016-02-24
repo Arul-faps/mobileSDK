@@ -79,7 +79,15 @@ class MessageDispatcher:NSObject {
     func leave() {
         let goingAwayBus:[Message] = NSArray(array: messageBus) as! [Message]
         for msg: Message in goingAwayBus {
-            self.dispatchMessage(msg)
+            if(msg.shouldselfdestruct == false){
+                self.dispatchMessage(msg)
+                msg.shouldselfdestruct = true
+                let index:Int = messageBus.indexOf(msg)!
+                if(index != NSNotFound){
+                    messageBus.removeAtIndex(index)
+                }
+            }
+            
         }
     }
     
