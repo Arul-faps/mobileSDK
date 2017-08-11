@@ -8,7 +8,8 @@
 
 import UIKit
 
-class Message:NSObject {
+class Message: NSObject {
+    
     var routingKey:String = String("")
     var httpMethod:String = String("")
     var params:AnyObject?
@@ -22,23 +23,27 @@ class Message:NSObject {
     }
     
     func routeFromRoutingKey() -> String {
-        var keyitems:[AnyObject]? = self.routingKey.componentsSeparatedByString(".")
+        
+        var keyitems:[String]? = self.routingKey.components(separatedBy: ".")
+        
         if keyitems != nil {
-            return keyitems![0] as! String
+            return keyitems![0] 
         }
         return ""
     }
     
     func messageFromRoutingKey() -> String {
-        let keyitems:[AnyObject]? = self.routingKey.componentsSeparatedByString(".")
+        
+        let keyitems:[String]? = self.routingKey.components(separatedBy: ".")
+      
         if keyitems != nil {
-            return (keyitems?.last)! as! String
+            return (keyitems?.last)! 
         }
         return ""
     }
     
-    func selfDestruct()
-    {
+    func selfDestruct() {
+        
         routingKey = "msg.selfdestruct"
         MessageDispatcher.sharedDispacherInstance.addMessageToBus(self)
     }
