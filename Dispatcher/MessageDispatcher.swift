@@ -6,41 +6,6 @@
 //
 
 import UIKit
-// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
-// Consider refactoring the code to use the non-optional operators.
-fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l < r
-  case (nil, _?):
-    return true
-  default:
-    return false
-  }
-}
-
-// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
-// Consider refactoring the code to use the non-optional operators.
-fileprivate func >= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l >= r
-  default:
-    return !(lhs < rhs)
-  }
-}
-
-// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
-// Consider refactoring the code to use the non-optional operators.
-fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l > r
-  default:
-    return rhs < lhs
-  }
-}
-
 
 class MessageDispatcher: NSObject {
     
@@ -67,9 +32,10 @@ class MessageDispatcher: NSObject {
         let msg:Message = notif.userInfo!["message"] as! Message
         switch(msg.routingKey){
         case "msg.selfdestruct":
-            let Index = messageBus.index(of: msg)
-            if(Index >= 0){
-                messageBus.remove(at: Index!)
+            if let index = messageBus.index(of: msg) {
+                if(index >= 0){
+                    messageBus.remove(at: index)
+                }
             }
             break
         default:
@@ -156,10 +122,10 @@ class MessageDispatcher: NSObject {
             message.params? = [AnyHashable: Any]() as AnyObject
         }
         
-        let sectoken: String? = UserDefaults.standard.object(forKey: "securitytoken") as? String
-        
-        if sectoken != nil && sectoken?.lengthOfBytes(using: String.Encoding.utf8) > 0 {
-            message.params?.set(sectoken, forKey: "securitytoken")
+        if let sectoken = UserDefaults.standard.object(forKey: "securitytoken") as? String {
+            if sectoken.lengthOfBytes(using: String.Encoding.utf8) > 0 {
+                message.params?.set(sectoken, forKey: "securitytoken")
+            }
         }
     }
     
