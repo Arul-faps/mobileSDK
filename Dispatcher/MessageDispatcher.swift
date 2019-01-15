@@ -28,7 +28,7 @@ class MessageDispatcher: NSObject {
         static var token: Int = 0
     }
     
-    func consumeMessage(_ notif:Notification) {
+    func consumeMessage(_ notif:Foundation.Notification) {
         let msg:Message = notif.userInfo!["message"] as! Message
         switch(msg.routingKey){
         case "msg.selfdestruct":
