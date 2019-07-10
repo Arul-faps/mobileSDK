@@ -18,7 +18,7 @@ class MessageDispatcher: NSObject {
         return {}
     }()
     
-    static let sharedDispacherInstance = MessageDispatcher()
+    @objc static let sharedDispacherInstance = MessageDispatcher()
     
     var dispsatchTimer:Timer?
     var messageBus         = [Message]()
@@ -28,7 +28,7 @@ class MessageDispatcher: NSObject {
         static var token: Int = 0
     }
     
-    func consumeMessage(_ notif:Foundation.Notification) {
+    @objc func consumeMessage(_ notif:Foundation.Notification) {
         let msg:Message = notif.userInfo!["message"] as! Message
         switch(msg.routingKey){
         case "msg.selfdestruct":
@@ -43,7 +43,7 @@ class MessageDispatcher: NSObject {
         }
     }
     
-    func addMessageToBus(_ newmessage: Message) {
+    @objc func addMessageToBus(_ newmessage: Message) {
         
         DispatchQueue.main.async {
             if(newmessage.shouldselfdestruct == false && newmessage.routingKey.caseInsensitiveCompare("msg.selfdestruct") == ComparisonResult.orderedSame) {
@@ -88,7 +88,7 @@ class MessageDispatcher: NSObject {
         }
     }
     
-    func leave() {
+    @objc func leave() {
         DispatchQueue.main.async {
             let goingAwayBus = NSArray(array: self.messageBus) as! [Message]
             

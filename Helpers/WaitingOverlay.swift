@@ -11,8 +11,8 @@ import UIKit
 
 class WaitingOverlay: UIView  {
     
-    var caption           = ""
-    var isCurrentlyActive = false
+    @objc var caption           = ""
+    @objc var isCurrentlyActive = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -22,10 +22,10 @@ class WaitingOverlay: UIView  {
         self.layer.masksToBounds = true
         self.layer.cornerRadius  = 10.0
         
-        let activityWheel: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle:.gray)
+        let activityWheel: UIActivityIndicatorView = UIActivityIndicatorView(style:.gray)
         
         activityWheel.center                     = self.center
-        activityWheel.activityIndicatorViewStyle = .white
+        activityWheel.style = .white
         
         activityWheel.startAnimating()
         self.addSubview(activityWheel)

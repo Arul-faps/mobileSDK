@@ -10,14 +10,14 @@ import UIKit
 
 class Message: NSObject {
     
-    var routingKey:String = String("")
-    var httpMethod:String = String("")
-    var params:AnyObject?
-    var ttl:Float = 0.1
-    var shouldselfdestruct:Bool = false
-    var messageApiEndPoint:String = String("")
+    @objc var routingKey:String = String("")
+    @objc var httpMethod:String = String("")
+    @objc var params:AnyObject?
+    @objc var ttl:Float = 0.1
+    @objc var shouldselfdestruct:Bool = false
+    @objc var messageApiEndPoint:String = String("")
     
-    init(routKey:String) {
+    @objc init(routKey:String) {
         super.init()
         self.routingKey = routKey
     }
@@ -42,7 +42,7 @@ class Message: NSObject {
         return ""
     }
     
-    func selfDestruct() {
+    @objc func selfDestruct() {
         
         routingKey = "msg.selfdestruct"
         MessageDispatcher.sharedDispacherInstance.addMessageToBus(self)
