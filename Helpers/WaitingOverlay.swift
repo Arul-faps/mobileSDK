@@ -16,13 +16,13 @@ class WaitingOverlay:UIView  {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = UIColor.blackColor()
+        self.backgroundColor = UIColor.black
         self.alpha = 0.7
         self.layer.masksToBounds = true
         self.layer.cornerRadius = 10.0
-        let activityWheel: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
+        let activityWheel: UIActivityIndicatorView = UIActivityIndicatorView(style: .gray)
         activityWheel.center = self.center
-        activityWheel.activityIndicatorViewStyle = .White
+        activityWheel.style = .white
         activityWheel.startAnimating()
         self.addSubview(activityWheel)
     }
@@ -32,16 +32,16 @@ class WaitingOverlay:UIView  {
         
     }
     
-    override func drawRect(rect: CGRect) {
-        let labelCaption: UILabel = UILabel(frame: CGRectMake(5, self.frame.size.height / 2, self.frame.size.width - 5, 60))
+    override func draw(_ rect: CGRect) {
+        let labelCaption: UILabel = UILabel(frame: CGRect(x: 5, y: self.frame.size.height / 2, width: self.frame.size.width - 5, height: 60))
         // /*CGRectMake(0, 500, 768,100)*/
         labelCaption.text = caption
         labelCaption.layer.cornerRadius = 10.0
-        labelCaption.textColor = UIColor.whiteColor()
-        labelCaption.font = UIFont.systemFontOfSize(14)
-        labelCaption.backgroundColor = UIColor.clearColor()
+        labelCaption.textColor = UIColor.white
+        labelCaption.font = UIFont.systemFont(ofSize: 14)
+        labelCaption.backgroundColor = UIColor.clear
         labelCaption.numberOfLines = 0
-        labelCaption.textAlignment = .Center
+        labelCaption.textAlignment = .center
         self.addSubview(labelCaption)
     }
     
