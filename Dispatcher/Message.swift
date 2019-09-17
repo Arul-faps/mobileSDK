@@ -8,37 +8,42 @@
 
 import UIKit
 
-class Message:NSObject {
-    var routingKey:String = String("")
-    var httpMethod:String = String("")
-    var params:AnyObject?
-    var ttl:Float = 0.1
-    var shouldselfdestruct:Bool = false
-    var messageApiEndPoint:String = String("")
+class Message: NSObject {
     
-    init(routKey:String) {
+    @objc var routingKey:String = String("")
+    @objc var httpMethod:String = String("")
+    @objc var params:AnyObject?
+    @objc var ttl:Float = 0.1
+    @objc var shouldselfdestruct:Bool = false
+    @objc var messageApiEndPoint:String = String("")
+    
+    @objc init(routKey:String) {
         super.init()
         self.routingKey = routKey
     }
     
     func routeFromRoutingKey() -> String {
-        var keyitems:[AnyObject]? = self.routingKey.componentsSeparatedByString(".")
+        
+        var keyitems:[String]? = self.routingKey.components(separatedBy: ".")
+        
         if keyitems != nil {
-            return keyitems![0] as! String
+            return keyitems![0] 
         }
         return ""
     }
     
     func messageFromRoutingKey() -> String {
-        let keyitems:[AnyObject]? = self.routingKey.componentsSeparatedByString(".")
+        
+        let keyitems:[String]? = self.routingKey.components(separatedBy: ".")
+      
         if keyitems != nil {
-            return (keyitems?.last)! as! String
+            return (keyitems?.last)! 
         }
         return ""
     }
     
-    func selfDestruct()
-    {
+    @objc func selfDestruct() {
+        
         routingKey = "msg.selfdestruct"
         MessageDispatcher.sharedDispacherInstance.addMessageToBus(self)
     }

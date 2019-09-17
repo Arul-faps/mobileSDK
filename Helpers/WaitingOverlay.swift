@@ -9,10 +9,10 @@
 import Foundation
 import UIKit
 
-class WaitingOverlay:UIView  {
+class WaitingOverlay: UIView  {
     
-    var  caption:String = ""
-    var isCurrentlyActive:Bool = false
+    @objc var caption           = ""
+    @objc var isCurrentlyActive = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -29,7 +29,6 @@ class WaitingOverlay:UIView  {
     
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)!
-        
     }
     
     override func draw(_ rect: CGRect) {
