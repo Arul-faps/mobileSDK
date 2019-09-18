@@ -9,10 +9,10 @@
 import Foundation
 import UIKit
 
-class WaitingOverlay: UIView  {
+@objc class WaitingOverlay:UIView  {
     
-    @objc var caption           = ""
-    @objc var isCurrentlyActive = false
+    @objc var  caption:String = ""
+    var isCurrentlyActive:Bool = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
