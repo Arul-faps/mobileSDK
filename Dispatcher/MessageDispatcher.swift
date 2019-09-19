@@ -163,37 +163,7 @@ class MessageDispatcher: NSObject {
               }
    }
     
-//    func addMessageToBus(newmessage: Message) {
-//        if(newmessage.routingKey.caseInsensitiveCompare("msg.selfdestruct") == ComparisonResult.orderedSame)
-//        {
-//            let index:Int = messageBus.index(of: newmessage)!
-//            if(index >= 0 ){
-//                messageBus.remove(at: index)
-//            }
-//        }
-//
-//        messageBus.append(newmessage)
-//
-//
-//
-//        DispatchQueue.once(token: _onceToken) {
-//
-//            DispatchQueue.main.async {
-//                if self.dispsatchTimer == nil {
-//                    self.startDispatching()
-//                }
-//            }
-//        }
-//        dispatch_once(&Static.token) { () -> Void in
-//            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//                if self.dispsatchTimer == nil {
-//                    self.startDispatching()
-//                }
-//            })
-//
-//        }
-        
-//    }
+
     
    @objc  func clearDispastchedMessages() {
         for msg:Message in dispatchedMessages {
