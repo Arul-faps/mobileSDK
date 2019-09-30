@@ -43,7 +43,7 @@ class MessageDispatcher: NSObject {
         }
     }
     
-    @objc func addMessageToBus(_ newmessage: Message) {
+   @objc(addMessageToBus:) public func addMessageToBus(_ newmessage: Message) {
         
         DispatchQueue.main.async {
             if(newmessage.shouldselfdestruct == false && newmessage.routingKey.caseInsensitiveCompare("msg.selfdestruct") == ComparisonResult.orderedSame) {
