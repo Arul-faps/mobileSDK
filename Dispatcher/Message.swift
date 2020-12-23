@@ -24,7 +24,7 @@ import UIKit
     func routeFromRoutingKey() -> String {
         let keyitems:[AnyObject]? = self.routingKey.components(separatedBy: ".") as [AnyObject]
         if keyitems != nil {
-            return keyitems![0] as! String
+			return keyitems![0] as! String
         }
         return ""
     }
@@ -32,7 +32,7 @@ import UIKit
     func messageFromRoutingKey() -> String {
         let keyitems:[AnyObject]? = self.routingKey.components(separatedBy: ".") as [AnyObject]
         if keyitems != nil {
-            return (keyitems?.last)! as! String
+			return (keyitems?.last)! as! String
         }
         return ""
     }

@@ -92,7 +92,7 @@ extension String {
     }
 
     
-    func validateEmail(email:String) -> Bool{
+    func validateEmail(_ email:String) -> Bool{
         let emailRegex:String = String("[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}")
         let emailTest: NSPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
         return emailTest.evaluate(with: email)
@@ -101,7 +101,7 @@ extension String {
 }
 
 extension Dictionary {
-    mutating func merge<K, V>(dict: [K: V]){
+    mutating func merge<K, V>(_ dict: [K: V]){
         for (k, v) in dict {
             self.updateValue(v as! Value, forKey: k as! Key)
         }

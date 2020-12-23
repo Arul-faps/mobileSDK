@@ -201,10 +201,9 @@ class MessageDispatcher: NSObject {
             if(Index! >= 0){
                 messageBus.remove(at: Index!)
             }
+            self.dispatchedMessages.removeAll()
         }
-        dispatchedMessages.removeAll()
     }
-    
     
     @objc func startDispatching() {
         NotificationCenter.default.addObserver(self, selector: #selector(consumeMessage(notif:)), name: NSNotification.Name(rawValue: "msg.selfdestruct"), object: nil)
@@ -229,14 +228,14 @@ class MessageDispatcher: NSObject {
                     messageBus.remove(at: index)
                 }
             }
-            
         }
     }
     
+
    @objc  func dispatchMessage(message: Message) {
         var messageDic: [NSObject : AnyObject] = [NSObject : AnyObject]()
         if message.routeFromRoutingKey().caseInsensitiveCompare("api") == ComparisonResult.orderedSame {
-            MessageApiConverter.sharedInstance.messageTypeToApiCall(msg: message)
+			MessageApiConverter.sharedInstance.messageTypeToApiCall(message)
         }
         messageDic = ["message" : message ] as [NSObject : AnyObject]
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: message.routingKey), object: nil, userInfo: messageDic)
